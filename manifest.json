@@ -1,0 +1,13 @@
+{
+  "name": "Quarteto Tenístico",
+  "short_name": "QT Club",
+  "description": "Ranking profissional de tênis - Roland Garros",
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#D96C1A",
+  "background_color": "#1a1a1a",
+  "icons": [
+    {"src": "quarteto-tenistico.png", "sizes": "192x192", "type": "image/png"},
+    {"src": "quarteto-tenistico.png", "sizes": "512x512", "type": "image/png"}
+  ]
+}
