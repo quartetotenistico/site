@@ -10,45 +10,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
-    <!-- Firebase SDK -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, query, orderBy, getDocs, deleteDoc, doc, where, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-        import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
-        
-        const firebaseConfig = {
-            apiKey: "AIzaSyC1HCA84bAsQWsf1y0c85gXZ2_Jn6_syaU",
-            authDomain: "quartetotenistico-9c9ab.firebaseapp.com",
-            databaseURL: "https://quartetotenistico-9c9ab-default-rtdb.firebaseio.com",
-            projectId: "quartetotenistico-9c9ab",
-            storageBucket: "quartetotenistico-9c9ab.firebasestorage.app",
-            messagingSenderId: "791700433774",
-            appId: "1:791700433774:web:ea08cc0ad6c1cc045fef7f",
-            measurementId: "G-VY5H7867HJ"
-        };
-        
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const storage = getStorage(app);
-        
-        window.db = db;
-        window.storage = storage;
-        window.addDoc = addDoc;
-        window.collection = collection;
-        window.query = query;
-        window.orderBy = orderBy;
-        window.getDocs = getDocs;
-        window.deleteDoc = deleteDoc;
-        window.doc = doc;
-        window.where = where;
-        window.updateDoc = updateDoc;
-        window.ref = ref;
-        window.uploadBytes = uploadBytes;
-        window.getDownloadURL = getDownloadURL;
-        window.deleteObject = deleteObject;
-        
-        console.log("Firebase inicializado!");
-    </script>
+    <!-- Firebase SDK (versão compatível) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
     
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -311,16 +276,31 @@
     </div>
 </div>
 
-<script type="module">
-// ==================== FIREBASE E APP ====================
-const db = window.db;
-const storage = window.storage;
+<script>
+// ==================== CONFIGURAÇÃO FIREBASE ====================
+const firebaseConfig = {
+    apiKey: "AIzaSyC1HCA84bAsQWsf1y0c85gXZ2_Jn6_syaU",
+    authDomain: "quartetotenistico-9c9ab.firebaseapp.com",
+    databaseURL: "https://quartetotenistico-9c9ab-default-rtdb.firebaseio.com",
+    projectId: "quartetotenistico-9c9ab",
+    storageBucket: "quartetotenistico-9c9ab.firebasestorage.app",
+    messagingSenderId: "791700433774",
+    appId: "1:791700433774:web:ea08cc0ad6c1cc045fef7f",
+    measurementId: "G-VY5H7867HJ"
+};
 
+// Inicializar Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const storage = firebase.storage();
+
+// ==================== VARIÁVEIS GLOBAIS ====================
 let players = [];
 let matches = [];
 let checkins = [];
 let losers = [];
 
+// ==================== UTILITÁRIOS ====================
 function showToast(message) {
     const toast = document.createElement('div');
     toast.className = 'toast';
@@ -329,61 +309,71 @@ function showToast(message) {
     setTimeout(() => toast.remove(), 2500);
 }
 
+// ==================== CARREGAR DADOS ====================
 async function loadPlayers() {
     try {
-        const q = query(collection(db, "players"), orderBy("name"));
-        const snap = await getDocs(q);
-        players = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-        console.log("Jogadores:", players.length);
+        const snapshot = await db.collection("players").orderBy("name").get();
+        players = [];
+        snapshot.forEach(doc => {
+            players.push({ id: doc.id, ...doc.data() });
+        });
+        console.log("✅ Jogadores carregados:", players.length);
         renderAllPlayerSelects();
         renderPlayersListAdmin();
         updateNextMatchDisplay();
         updateRankingTable();
     } catch (error) {
-        console.error("Erro:", error);
-        showToast("Erro ao carregar jogadores");
+        console.error("❌ Erro ao carregar jogadores:", error);
+        showToast("Erro ao carregar jogadores: " + error.message);
     }
 }
 
 async function loadMatches() {
     try {
-        const q = query(collection(db, "matches"), orderBy("date", "desc"));
-        const snap = await getDocs(q);
-        matches = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-        console.log("Partidas:", matches.length);
+        const snapshot = await db.collection("matches").orderBy("date", "desc").get();
+        matches = [];
+        snapshot.forEach(doc => {
+            matches.push({ id: doc.id, ...doc.data() });
+        });
+        console.log("✅ Partidas carregadas:", matches.length);
         updateRankingTable();
         updateRankingDuplas();
         updateHighlights();
         updateRecentMatches();
         updateDeleteMatchSelect();
     } catch (error) {
-        console.error("Erro:", error);
+        console.error("Erro ao carregar partidas:", error);
     }
 }
 
 async function loadCheckins() {
     try {
-        const q = query(collection(db, "checkins"), orderBy("timestamp", "desc"));
-        const snap = await getDocs(q);
-        checkins = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        const snapshot = await db.collection("checkins").orderBy("timestamp", "desc").get();
+        checkins = [];
+        snapshot.forEach(doc => {
+            checkins.push(doc.data());
+        });
         renderCheckins();
         updateNextMatchDisplay();
     } catch (error) {
-        console.error("Erro:", error);
+        console.error("Erro ao carregar checkins:", error);
     }
 }
 
 async function loadLosers() {
     try {
-        const q = query(collection(db, "losers"), orderBy("timestamp", "desc"));
-        const snap = await getDocs(q);
-        losers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        const snapshot = await db.collection("losers").orderBy("timestamp", "desc").get();
+        losers = [];
+        snapshot.forEach(doc => {
+            losers.push({ id: doc.id, ...doc.data() });
+        });
         renderLosersRanking();
     } catch (error) {
-        console.error("Erro:", error);
+        console.error("Erro ao carregar perdedores:", error);
     }
 }
 
+// ==================== RENDERIZAÇÕES ====================
 function renderAllPlayerSelects() {
     const selects = ["checkin-player-select", "delete-player-select", "loser-select", 
                      "score-player1", "score-player2", "dupla-a1", "dupla-a2", "dupla-b1", "dupla-b2"];
@@ -439,7 +429,7 @@ function renderCheckins() {
         } else {
             const checkinsList = checkins.slice(0, 10).map(c => {
                 const player = players.find(p => p.id === c.playerId);
-                const date = new Date(c.date).toLocaleDateString();
+                const date = c.date ? new Date(c.date).toLocaleDateString() : 'Data não informada';
                 return `<div style="padding:5px 0; font-size:0.75rem;">📅 ${date} - ${player?.name || "?"}</div>`;
             }).join('');
             div.innerHTML = `<i class="fas fa-users"></i> Últimos check-ins:<br>${checkinsList}`;
@@ -458,7 +448,7 @@ function updateRecentMatches() {
     div.innerHTML = recent.map(m => {
         const winner = m.winners?.map(w => players.find(p => p.id === w)?.name).join(" / ") || "?";
         const loser = m.losers?.map(l => players.find(p => p.id === l)?.name).join(" / ") || "?";
-        const date = new Date(m.date).toLocaleDateString();
+        const date = m.date ? new Date(m.date).toLocaleDateString() : 'Data desconhecida';
         const typeLabel = m.type === "duplas" ? "👥 Duplas" : "🎾 Simples";
         const gamesWon = m.gamesWon || "?";
         return `<div class="match-item">
@@ -478,7 +468,7 @@ function updateDeleteMatchSelect() {
             matches.slice(0, 30).map(m => {
                 const winner = m.winners?.map(w => players.find(p => p.id === w)?.name).join("/") || "?";
                 const loser = m.losers?.map(l => players.find(p => p.id === l)?.name).join("/") || "?";
-                const date = new Date(m.date).toLocaleDateString();
+                const date = m.date ? new Date(m.date).toLocaleDateString() : 'Data desconhecida';
                 return `<option value="${m.id}">${date} - ${winner} x ${loser}</option>`;
             }).join('');
     }
@@ -490,7 +480,7 @@ async function deleteMatch(matchId) {
         return;
     }
     try {
-        await deleteDoc(doc(db, "matches", matchId));
+        await db.collection("matches").doc(matchId).delete();
         showToast("✅ Partida excluída com sucesso!");
         await loadMatches();
     } catch (error) {
@@ -511,7 +501,6 @@ function updateRankingTable() {
         }; 
     });
     
-    // Calcular assiduidade baseada em check-ins
     const playerCheckins = {};
     checkins.forEach(c => {
         playerCheckins[c.playerId] = (playerCheckins[c.playerId] || 0) + 1;
@@ -538,7 +527,6 @@ function updateRankingTable() {
         stats[p.id].assiduidade = playerCheckins[p.id] || 0;
     });
     
-    // Ordenação: 1º Vitórias, 2º Assiduidade, 3º Games vencidos
     const sorted = Object.entries(stats).sort((a,b) => {
         if(b[1].vitorias !== a[1].vitorias) return b[1].vitorias - a[1].vitorias;
         if(b[1].assiduidade !== a[1].assiduidade) return b[1].assiduidade - a[1].assiduidade;
@@ -548,7 +536,7 @@ function updateRankingTable() {
     const tbody = document.getElementById("ranking-body");
     if(tbody) {
         if(sorted.length === 0) {
-            tbody.innerHTML = "<tr><td colspan='7'>Nenhuma partida registrada</td></tr>";
+            tbody.innerHTML = "<tr><td colspan='7'>Nenhuma partida registrada</td><td/></tr>";
         } else {
             tbody.innerHTML = sorted.map(([id, s], idx) => {
                 const player = players.find(p => p.id === id);
@@ -594,6 +582,7 @@ function updateRankingDuplas() {
     }
 }
 
+// ==================== AÇÕES PRINCIPAIS ====================
 async function addPlayer(name, file) {
     if(!name || !name.trim()) {
         showToast("Digite o nome do jogador");
@@ -603,21 +592,21 @@ async function addPlayer(name, file) {
         showToast("Adicionando jogador...");
         let photoUrl = null;
         if(file) {
-            const storageRef = ref(storage, `players/${Date.now()}_${file.name}`);
-            await uploadBytes(storageRef, file);
-            photoUrl = await getDownloadURL(storageRef);
+            const storageRef = storage.ref(`players/${Date.now()}_${file.name}`);
+            await storageRef.put(file);
+            photoUrl = await storageRef.getDownloadURL();
         }
-        await addDoc(collection(db, "players"), { 
+        await db.collection("players").add({ 
             name: name.trim(), 
             photoUrl: photoUrl,
             createdAt: new Date().toISOString()
         });
-        showToast(`✅ Jogador ${name} adicionado!`);
+        showToast(`✅ Jogador ${name} adicionado com sucesso!`);
         await loadPlayers();
         return true;
     } catch (error) {
-        console.error("Erro:", error);
-        showToast("Erro ao adicionar jogador");
+        console.error("❌ Erro ao adicionar jogador:", error);
+        showToast("Erro ao adicionar jogador: " + error.message);
         return false;
     }
 }
@@ -628,11 +617,11 @@ async function deletePlayer(playerId) {
         return;
     }
     try {
-        await deleteDoc(doc(db, "players", playerId));
-        showToast("Jogador removido");
+        await db.collection("players").doc(playerId).delete();
+        showToast("✅ Jogador removido com sucesso");
         await loadPlayers();
     } catch (error) {
-        console.error("Erro:", error);
+        console.error("Erro ao remover jogador:", error);
         showToast("Erro ao remover jogador");
     }
 }
@@ -643,7 +632,7 @@ async function registerLoser(playerId) {
         return;
     }
     try {
-        await addDoc(collection(db, "losers"), {
+        await db.collection("losers").add({
             playerId: playerId,
             date: new Date().toISOString(),
             timestamp: Date.now()
@@ -666,7 +655,7 @@ async function doCheckin(playerId, selectedDate) {
         return;
     }
     try {
-        await addDoc(collection(db, "checkins"), {
+        await db.collection("checkins").add({
             playerId: playerId,
             date: selectedDate,
             timestamp: Date.now()
@@ -685,10 +674,10 @@ async function uploadPhoto(file) {
         return;
     }
     try {
-        const storageRef = ref(storage, `highlights/${Date.now()}_${file.name}`);
-        await uploadBytes(storageRef, file);
-        const url = await getDownloadURL(storageRef);
-        await addDoc(collection(db, "highlights"), {
+        const storageRef = storage.ref(`highlights/${Date.now()}_${file.name}`);
+        await storageRef.put(file);
+        const url = await storageRef.getDownloadURL();
+        await db.collection("highlights").add({
             url: url,
             desc: "Momento épico do Quarteto Tenístico",
             timestamp: Date.now()
@@ -703,12 +692,11 @@ async function uploadPhoto(file) {
 
 async function updateHighlights() {
     try {
-        const q = query(collection(db, "highlights"), orderBy("timestamp", "desc"));
-        const snap = await getDocs(q);
+        const snapshot = await db.collection("highlights").orderBy("timestamp", "desc").get();
         const img = document.getElementById("highlights-img");
         const desc = document.getElementById("highlights-desc");
-        if(!snap.empty && img && desc) {
-            const last = snap.docs[0].data();
+        if(!snapshot.empty && img && desc) {
+            const last = snapshot.docs[0].data();
             img.src = last.url;
             desc.innerHTML = last.desc || "Momento inesquecível!";
         }
@@ -790,7 +778,7 @@ async function saveMatchWithScore() {
         gamesWonTotal = calculateGamesWon(playersArray, winnersArray, sets);
         
         try {
-            await addDoc(collection(db, "matches"), {
+            await db.collection("matches").add({
                 type: "simples",
                 players: playersArray,
                 winners: winnersArray,
@@ -856,7 +844,7 @@ async function saveMatchWithScore() {
         gamesWonTotal = calculateGamesWon(playersArray, winnersArray, sets);
         
         try {
-            await addDoc(collection(db, "matches"), {
+            await db.collection("matches").add({
                 type: "duplas",
                 players: playersArray,
                 winners: winnersArray,
@@ -931,7 +919,10 @@ function toggleDuplaFields() {
 
 async function updateNextMatchDisplay() {
     const hoje = new Date().toDateString();
-    const checkinsHoje = checkins.filter(c => new Date(c.date).toDateString() === hoje);
+    const checkinsHoje = checkins.filter(c => {
+        if(!c.date) return false;
+        return new Date(c.date).toDateString() === hoje;
+    });
     const checkedIds = checkinsHoje.map(c => c.playerId);
     const available = players.filter(p => checkedIds.includes(p.id));
     
@@ -941,7 +932,6 @@ async function updateNextMatchDisplay() {
     
     if(!container) return;
     
-    // Pegar data do próximo jogo (primeiro check-in do dia)
     if(checkinsHoje.length > 0 && checkinsHoje[0].date) {
         const matchDate = new Date(checkinsHoje[0].date);
         dateDisplay.innerHTML = `📅 Data do Duelo: ${matchDate.toLocaleDateString('pt-BR')}`;
@@ -1051,8 +1041,9 @@ function bindEvents() {
     });
 }
 
+// ==================== INICIALIZAÇÃO ====================
 document.addEventListener("DOMContentLoaded", async () => {
-    console.log("Iniciando aplicação...");
+    console.log("🚀 Iniciando aplicação...");
     setupTabs();
     bindEvents();
     
@@ -1065,7 +1056,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     await loadCheckins();
     await loadLosers();
     toggleDuplaFields();
-    console.log("Aplicação inicializada!");
+    console.log("✅ Aplicação inicializada com sucesso!");
 });
 </script>
 </body>
