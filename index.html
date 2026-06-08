@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Quarteto Tenístico | Clube de Tênis</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Quarteto Tenístico | Ranking Profissional</title>
+    
+    <!-- Fontes -->
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <!-- Firebase SDKs -->
@@ -16,49 +18,45 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
-            font-family: 'Montserrat', sans-serif;
+            font-family: 'Roboto', sans-serif;
+            background: #1a1a1a;
             min-height: 100vh;
-            background: linear-gradient(135deg, #1B5E20 0%, #0D3B0F 50%, #1B5E20 100%);
-            position: relative;
-            overflow-x: hidden;
         }
         
-        /* Textura de saibro */
-        body::before {
-            content: "";
+        /* Fundo profissional com textura de saibro sutil */
+        .clay-bg {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
+            background: linear-gradient(145deg, #D4A373 0%, #B8895A 100%);
+            z-index: -2;
+        }
+        
+        .clay-bg::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background-image: 
-                radial-gradient(circle at 20% 30%, rgba(210, 90, 30, 0.15) 2px, transparent 2px),
-                radial-gradient(circle at 70% 80%, rgba(200, 80, 20, 0.1) 1px, transparent 1px);
-            background-size: 50px 50px, 30px 30px;
+                radial-gradient(circle at 25% 40%, rgba(80, 50, 20, 0.15) 1px, transparent 1px),
+                radial-gradient(circle at 70% 85%, rgba(60, 40, 15, 0.1) 1px, transparent 1px);
+            background-size: 35px 35px, 25px 25px;
             pointer-events: none;
-            z-index: 0;
         }
         
-        /* Elementos decorativos de tênis */
-        .tennis-balls {
-            position: fixed;
-            bottom: 20px;
-            right: 10px;
-            opacity: 0.15;
-            z-index: 0;
-        }
-        
-        .tennis-balls i { font-size: 80px; color: #F5E56B; margin: 5px; }
-        
-        .racket-decor {
-            position: fixed;
-            top: 20%;
-            left: -30px;
-            opacity: 0.1;
-            transform: rotate(-30deg);
-            font-size: 150px;
-            color: white;
-            z-index: 0;
+        .clay-bg::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.4);
+            pointer-events: none;
         }
         
         .container {
@@ -70,258 +68,228 @@
         }
         
         /* Header Premium */
-        .header-premium {
+        .header {
+            background: rgba(0,0,0,0.75);
+            backdrop-filter: blur(12px);
+            border-radius: 12px;
+            padding: 24px 20px;
+            margin-bottom: 24px;
+            border-bottom: 3px solid #E67E22;
             text-align: center;
-            margin-bottom: 25px;
-            padding: 25px 20px;
-            background: linear-gradient(135deg, rgba(244,123,32,0.95), rgba(217,108,26,0.95));
-            border-radius: 40px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
-            border: 1px solid rgba(255,200,100,0.5);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .header-premium::before {
-            content: "🎾";
-            position: absolute;
-            font-size: 100px;
-            right: -20px;
-            top: -30px;
-            opacity: 0.1;
-            transform: rotate(15deg);
         }
         
         .logo-img {
-            width: 85px;
-            height: 85px;
+            width: 70px;
+            height: 70px;
             object-fit: contain;
             background: white;
-            border-radius: 50%;
+            border-radius: 12px;
             margin-bottom: 12px;
-            padding: 8px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            border: 2px solid #FFD700;
+            padding: 5px;
         }
         
-        .header-premium h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: white;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        .header h1 {
+            font-family: 'Anton', sans-serif;
+            font-size: 2rem;
+            font-weight: 400;
+            letter-spacing: 1px;
+            color: #E67E22;
+            margin-bottom: 5px;
+        }
+        
+        .header .sub {
+            font-family: 'Roboto', sans-serif;
+            font-size: 0.7rem;
+            color: #CCCCCC;
             letter-spacing: 1px;
         }
         
-        .header-premium p {
-            font-size: 0.7rem;
-            color: #FFF0D0;
-            letter-spacing: 2px;
-            margin-top: 5px;
+        /* Cards */
+        .card {
+            background: rgba(255,255,255,0.96);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border: 1px solid rgba(230,126,34,0.3);
         }
         
-        /* Card Próximo Duelo - Especial */
+        .card-title {
+            font-family: 'Roboto', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            color: #E67E22;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-left: 3px solid #E67E22;
+            padding-left: 12px;
+            text-transform: uppercase;
+        }
+        
+        .card-title i { font-size: 1.1rem; color: #E67E22; }
+        
+        /* Próximo Duelo */
         .next-match-card {
-            background: linear-gradient(145deg, rgba(255,245,235,0.95), rgba(255,235,215,0.95));
-            border-radius: 35px;
+            background: rgba(0,0,0,0.75);
+            backdrop-filter: blur(12px);
+            border-radius: 12px;
             padding: 20px;
-            margin-bottom: 25px;
-            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
-            border: 1px solid rgba(244,123,32,0.4);
+            margin-bottom: 24px;
+            border: 1px solid #E67E22;
             text-align: center;
-            backdrop-filter: blur(5px);
         }
         
         .next-match-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.2rem;
-            color: #D96C1A;
+            font-family: 'Anton', sans-serif;
+            font-size: 1rem;
+            letter-spacing: 2px;
+            color: #E67E22;
             margin-bottom: 15px;
-            display: inline-block;
-            padding: 0 20px;
-            border-bottom: 2px solid #F47B20;
         }
         
         .next-match-players {
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 25px;
+            gap: 20px;
             flex-wrap: wrap;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
         
         .next-player {
             text-align: center;
-            background: white;
-            padding: 15px 20px;
-            border-radius: 30px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            min-width: 120px;
+            background: rgba(255,255,255,0.1);
+            padding: 12px 20px;
+            border-radius: 12px;
+            min-width: 110px;
         }
         
         .next-player-img {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
+            width: 65px;
+            height: 65px;
+            border-radius: 12px;
             object-fit: cover;
-            border: 3px solid #F47B20;
-            background: #FFF0E0;
+            border: 2px solid #E67E22;
+            background: #2a2a2a;
             margin-bottom: 8px;
         }
         
         .next-player-name {
             font-weight: 700;
-            color: #4A2A1A;
-            font-size: 1rem;
+            color: #FFF;
+            font-size: 0.85rem;
         }
         
         .vs-divider {
-            font-size: 1.5rem;
-            font-weight: 800;
-            color: #F47B20;
-            background: rgba(244,123,32,0.2);
-            padding: 8px 18px;
-            border-radius: 50px;
+            font-family: 'Anton', sans-serif;
+            font-size: 1.2rem;
+            color: #E67E22;
+            background: rgba(230,126,34,0.2);
+            padding: 5px 15px;
+            border-radius: 30px;
         }
         
         .match-date-info {
-            margin-top: 12px;
+            margin-top: 10px;
             padding: 8px;
-            background: rgba(46,125,50,0.15);
-            border-radius: 30px;
-            font-size: 0.8rem;
-            color: #2E7D32;
+            background: rgba(230,126,34,0.15);
+            border-radius: 8px;
+            font-size: 0.75rem;
+            color: #E67E22;
         }
         
-        /* Cards Gerais */
-        .card {
-            background: rgba(255,252,245,0.96);
-            border-radius: 28px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-            border: 1px solid rgba(244,123,32,0.3);
-            transition: transform 0.2s;
-        }
-        
-        .card:hover { transform: translateY(-3px); }
-        
-        .card-header {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: #D96C1A;
-            margin-bottom: 18px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            border-left: 4px solid #F47B20;
-            padding-left: 15px;
-        }
-        
-        .card-header i { font-size: 1.4rem; color: #F47B20; }
-        
-        /* Botões com Degrade */
-        .btn-orange {
-            background: linear-gradient(135deg, #F47B20, #D96C1A);
+        /* Botões */
+        .btn-primary {
+            background: #E67E22;
             border: none;
-            padding: 14px 20px;
-            border-radius: 50px;
+            padding: 12px;
+            border-radius: 8px;
+            font-family: 'Roboto', sans-serif;
             font-weight: 700;
             color: white;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             cursor: pointer;
             width: 100%;
             transition: all 0.2s;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
         
-        .btn-orange:active { transform: scale(0.97); background: linear-gradient(135deg, #E06A10, #C05A0A); }
-        .btn-green { background: linear-gradient(135deg, #2E7D32, #1B5E20); }
-        .btn-outline { background: transparent; border: 2px solid #F47B20; color: #F47B20; }
-        .btn-danger { background: linear-gradient(135deg, #D32F2F, #B71C1C); }
+        .btn-primary:active { transform: scale(0.97); background: #D35400; }
+        .btn-danger { background: #C0392B; }
+        .btn-outline { background: transparent; border: 1px solid #E67E22; color: #E67E22; }
         
         input, select {
             width: 100%;
-            padding: 12px 18px;
-            border-radius: 50px;
-            border: 1px solid #E0D0C0;
-            background: white;
-            font-family: 'Montserrat', sans-serif;
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1px solid #DDD;
+            font-family: 'Roboto', sans-serif;
             margin-bottom: 12px;
         }
         
-        input:focus, select:focus { outline: none; border-color: #F47B20; box-shadow: 0 0 0 3px rgba(244,123,32,0.2); }
+        input:focus, select:focus { outline: none; border-color: #E67E22; }
         
         .player-item, .match-item {
-            background: #FFF8F0;
-            padding: 12px;
-            border-radius: 20px;
-            margin-bottom: 10px;
+            background: #F5F5F5;
+            padding: 10px 12px;
+            border-radius: 8px;
+            margin-bottom: 8px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-left: 3px solid #F47B20;
+            border-left: 3px solid #E67E22;
         }
         
         .ranking-item {
             display: flex;
             justify-content: space-between;
-            padding: 12px;
-            border-bottom: 1px solid #F0E0D0;
-            font-weight: 500;
+            padding: 10px;
+            border-bottom: 1px solid #EEE;
+            font-size: 0.9rem;
         }
         
-        .score-set { text-align: center; margin: 10px 0; }
-        .score-input { width: 70px; text-align: center; display: inline-block; margin: 0 5px; padding: 8px; border-radius: 30px; }
+        .score-set { text-align: center; margin: 12px 0; }
+        .score-input { width: 65px; text-align: center; display: inline-block; margin: 0 5px; padding: 8px; border-radius: 8px; }
         
         .bottom-menu {
             position: fixed;
-            bottom: 15px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0,0,0,0.85);
-            backdrop-filter: blur(15px);
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.9);
+            backdrop-filter: blur(12px);
             display: flex;
             justify-content: space-around;
-            padding: 8px 20px;
-            border-radius: 60px;
-            border: 1px solid #F47B20;
-            width: auto;
-            gap: 15px;
+            padding: 8px 16px;
+            border-top: 1px solid #E67E22;
         }
         
         .menu-btn {
             background: transparent;
             border: none;
             text-align: center;
-            color: #DDD;
+            color: #AAA;
             font-size: 0.7rem;
             cursor: pointer;
-            padding: 8px 15px;
-            border-radius: 40px;
-            transition: all 0.2s;
+            padding: 8px;
+            font-family: 'Roboto', sans-serif;
         }
         
-        .menu-btn.active {
-            background: linear-gradient(135deg, #F47B20, #D96C1A);
-            color: white;
-        }
-        
-        .menu-btn i { font-size: 1.2rem; display: block; margin-bottom: 4px; }
+        .menu-btn.active { color: #E67E22; }
+        .menu-btn i { font-size: 1.1rem; display: block; margin-bottom: 4px; }
         
         .hidden { display: none; }
         
         .toast {
             position: fixed;
-            bottom: 100px;
+            bottom: 80px;
             left: 50%;
             transform: translateX(-50%);
-            background: #333;
+            background: #2C2C2C;
             color: white;
-            padding: 12px 24px;
-            border-radius: 50px;
+            padding: 10px 20px;
+            border-radius: 8px;
             font-size: 0.8rem;
             z-index: 1000;
             animation: fadeOut 2s forwards;
@@ -329,85 +297,75 @@
         
         @keyframes fadeOut { 0% { opacity: 1; } 70% { opacity: 1; } 100% { opacity: 0; visibility: hidden; } }
         
-        .photo-preview { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; margin: 5px 0; border: 2px solid #F47B20; }
+        .photo-preview { width: 50px; height: 50px; border-radius: 8px; object-fit: cover; margin: 8px 0; border: 1px solid #E67E22; }
         .flex-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-        .w-100 { width: 100%; }
         
-        /* Scrollbar */
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-track { background: #E8DCC8; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb { background: #F47B20; border-radius: 10px; }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #E0D0C0; }
+        ::-webkit-scrollbar-thumb { background: #E67E22; border-radius: 4px; }
     </style>
 </head>
 <body>
 
-<div class="tennis-balls">
-    <i class="fas fa-tennis-ball"></i>
-    <i class="fas fa-tennis-ball"></i>
-    <i class="fas fa-tennis-ball"></i>
-</div>
-<div class="racket-decor">
-    <i class="fas fa-table-tennis"></i>
-</div>
+<div class="clay-bg"></div>
 
 <div class="container">
-    <div class="header-premium">
-        <img src="quarteto tenistico.png" class="logo-img" onerror="this.src='https://via.placeholder.com/85?text=QT'">
+    <div class="header">
+        <img src="quarteto tenistico.png" class="logo-img" onerror="this.style.display='none'">
         <h1>QUARTETO TENÍSTICO</h1>
-        <p>🎾 ROLAND GARROS • CLUBE DE TÊNIS 🎾</p>
+        <div class="sub">SENDO RUIM EM MAIS UM ESPORTE</div>
     </div>
 
     <!-- PRÓXIMO DUELO -->
     <div class="next-match-card">
-        <div class="next-match-title">🎾 PRÓXIMO DUELO 🎾</div>
+        <div class="next-match-title">🎾 PRÓXIMO DUELO</div>
         <div id="next-match-players" class="next-match-players">
             <div class="next-player">
-                <div class="next-player-img"><i class="fas fa-user-circle" style="font-size:60px; color:#CCC;"></i></div>
+                <div class="next-player-img"><i class="fas fa-user" style="font-size:35px; color:#888; line-height:65px;"></i></div>
                 <div class="next-player-name">Aguardando</div>
             </div>
             <div class="vs-divider">VS</div>
             <div class="next-player">
-                <div class="next-player-img"><i class="fas fa-user-circle" style="font-size:60px; color:#CCC;"></i></div>
+                <div class="next-player-img"><i class="fas fa-user" style="font-size:35px; color:#888; line-height:65px;"></i></div>
                 <div class="next-player-name">Aguardando</div>
             </div>
         </div>
         <div id="match-date-info" class="match-date-info"></div>
-        <div id="next-match-status" style="margin-top: 10px; font-size:0.75rem; color:#D96C1A;"></div>
+        <div id="next-match-status" style="margin-top: 10px; font-size:0.7rem; color:#E67E22;"></div>
     </div>
 
     <!-- HOME -->
     <div id="home-tab">
         <div class="card">
-            <div class="card-header"><i class="fas fa-skull"></i> 🏆 PERDEDOR DA RODADA 🏆</div>
+            <div class="card-title"><i class="fas fa-skull"></i> PERDEDOR DA RODADA</div>
             <select id="loser-select"></select>
-            <button class="btn-orange" id="register-loser">💀 Hostilizar Perdedor</button>
+            <button class="btn-primary" id="register-loser">HOSTILIZAR PERDEDOR</button>
             <div id="losers-list" style="margin-top: 15px;"></div>
         </div>
         
         <div class="card">
-            <div class="card-header"><i class="fas fa-check-circle"></i> CHECK-IN DO DUELO</div>
+            <div class="card-title"><i class="fas fa-check-circle"></i> CHECK-IN</div>
             <select id="checkin-select"></select>
             <input type="date" id="checkin-date">
-            <button class="btn-orange" id="do-checkin">✅ Confirmar Presença</button>
+            <button class="btn-primary" id="do-checkin">CONFIRMAR PRESENÇA</button>
             <div id="checkins-list" style="margin-top: 15px; max-height: 150px; overflow-y: auto;"></div>
         </div>
         
         <div class="card">
-            <div class="card-header"><i class="fas fa-camera"></i> MOMENTO ÉPICO</div>
+            <div class="card-title"><i class="fas fa-camera"></i> HIGHLIGHT</div>
             <input type="file" id="photo-file" accept="image/*">
-            <button class="btn-orange" id="upload-photo">⭐ Destacar Melhor Momento</button>
-            <img id="highlight-img" style="width: 100%; margin-top: 12px; border-radius: 20px; display: none;">
+            <button class="btn-primary" id="upload-photo">DESTACAR MOMENTO</button>
+            <img id="highlight-img" style="width: 100%; margin-top: 12px; border-radius: 8px; display: none;">
         </div>
     </div>
 
     <!-- PLACAR -->
     <div id="placar-tab" class="hidden">
         <div class="card">
-            <div class="card-header"><i class="fas fa-chalkboard"></i> REGISTRAR PARTIDA</div>
-            
+            <div class="card-title"><i class="fas fa-chalkboard"></i> REGISTRAR PARTIDA</div>
             <select id="match-type">
-                <option value="simples">🎾 Simples (2 jogadores)</option>
-                <option value="duplas">👥 Duplas (4 jogadores)</option>
+                <option value="simples">SIMPLES (2 jogadores)</option>
+                <option value="duplas">DUPLAS (4 jogadores)</option>
             </select>
             
             <div id="simples-area">
@@ -426,36 +384,21 @@
                 </div>
             </div>
             
-            <div class="score-set">
-                <span>1º SET:</span>
-                <input type="number" id="set1a" class="score-input" placeholder="A" min="0" max="7">
-                <span>x</span>
-                <input type="number" id="set1b" class="score-input" placeholder="B" min="0" max="7">
-            </div>
-            <div class="score-set">
-                <span>2º SET:</span>
-                <input type="number" id="set2a" class="score-input" placeholder="A" min="0" max="7">
-                <span>x</span>
-                <input type="number" id="set2b" class="score-input" placeholder="B" min="0" max="7">
-            </div>
-            <div class="score-set">
-                <span>3º SET:</span>
-                <input type="number" id="set3a" class="score-input" placeholder="A" min="0" max="7">
-                <span>x</span>
-                <input type="number" id="set3b" class="score-input" placeholder="B" min="0" max="7">
-            </div>
+            <div class="score-set"><span>1º SET:</span> <input type="number" id="set1a" class="score-input" min="0" max="7"> <span>x</span> <input type="number" id="set1b" class="score-input" min="0" max="7"></div>
+            <div class="score-set"><span>2º SET:</span> <input type="number" id="set2a" class="score-input" min="0" max="7"> <span>x</span> <input type="number" id="set2b" class="score-input" min="0" max="7"></div>
+            <div class="score-set"><span>3º SET:</span> <input type="number" id="set3a" class="score-input" min="0" max="7"> <span>x</span> <input type="number" id="set3b" class="score-input" min="0" max="7"></div>
             
-            <button class="btn-orange" id="save-match">📝 SALVAR PARTIDA</button>
+            <button class="btn-primary" id="save-match">SALVAR PARTIDA</button>
         </div>
         
         <div class="card">
-            <div class="card-header"><i class="fas fa-trash"></i> EXCLUIR RESULTADO</div>
+            <div class="card-title"><i class="fas fa-trash"></i> EXCLUIR RESULTADO</div>
             <select id="delete-match-select"></select>
-            <button class="btn-danger" id="delete-match">🗑️ Excluir Partida</button>
+            <button class="btn-primary btn-danger" id="delete-match">EXCLUIR PARTIDA</button>
         </div>
         
         <div class="card">
-            <div class="card-header"><i class="fas fa-history"></i> ÚLTIMAS PARTIDAS</div>
+            <div class="card-title"><i class="fas fa-history"></i> ÚLTIMAS PARTIDAS</div>
             <div id="recent-matches" style="max-height: 300px; overflow-y: auto;"></div>
         </div>
     </div>
@@ -463,11 +406,11 @@
     <!-- RANKING -->
     <div id="rankings-tab" class="hidden">
         <div class="card">
-            <div class="card-header"><i class="fas fa-trophy"></i> RANKING SIMPLES</div>
+            <div class="card-title"><i class="fas fa-trophy"></i> RANKING SIMPLES</div>
             <div id="ranking-simples"></div>
         </div>
         <div class="card">
-            <div class="card-header"><i class="fas fa-users"></i> RANKING DUPLAS</div>
+            <div class="card-title"><i class="fas fa-users"></i> RANKING DUPLAS</div>
             <div id="ranking-duplas"></div>
         </div>
     </div>
@@ -475,21 +418,21 @@
     <!-- ADMIN -->
     <div id="admin-tab" class="hidden">
         <div class="card">
-            <div class="card-header"><i class="fas fa-user-plus"></i> ADICIONAR JOGADOR</div>
-            <input type="text" id="player-name" placeholder="Nome do jogador">
+            <div class="card-title"><i class="fas fa-user-plus"></i> ADICIONAR JOGADOR</div>
+            <input type="text" id="player-name" placeholder="Nome completo">
             <input type="file" id="player-photo-file" accept="image/*">
             <div id="player-photo-preview"></div>
-            <button class="btn-orange" id="add-player">➕ Adicionar Jogador com Foto</button>
+            <button class="btn-primary" id="add-player">ADICIONAR JOGADOR</button>
         </div>
         
         <div class="card">
-            <div class="card-header"><i class="fas fa-user-minus"></i> REMOVER JOGADOR</div>
+            <div class="card-title"><i class="fas fa-user-minus"></i> REMOVER JOGADOR</div>
             <select id="remove-player-select"></select>
-            <button class="btn-outline" id="remove-player">❌ Remover Jogador</button>
+            <button class="btn-outline" id="remove-player">REMOVER JOGADOR</button>
         </div>
         
         <div class="card">
-            <div class="card-header"><i class="fas fa-list"></i> MEMBROS DO CLUBE</div>
+            <div class="card-title"><i class="fas fa-list"></i> MEMBROS</div>
             <div id="members-list" style="max-height: 250px; overflow-y: auto;"></div>
         </div>
     </div>
@@ -503,7 +446,7 @@
 </div>
 
 <script>
-// ==================== FIREBASE ====================
+// Firebase Config
 const firebaseConfig = {
     apiKey: "AIzaSyC1HCA84bAsQWsf1y0c85gXZ2_Jn6_syaU",
     authDomain: "quartetotenistico-9c9ab.firebaseapp.com",
@@ -518,14 +461,12 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 const storage = firebase.storage();
 
-// ==================== VARIÁVEIS ====================
+// Variáveis
 let players = [];
 let matches = [];
 let checkins = [];
 let losers = [];
-let highlights = [];
 
-// ==================== FUNÇÕES ====================
 function showToast(msg) {
     let toast = document.createElement('div');
     toast.className = 'toast';
@@ -534,26 +475,30 @@ function showToast(msg) {
     setTimeout(() => toast.remove(), 2500);
 }
 
-// CARREGAR DADOS
+// Carregar Jogadores
 async function loadPlayers() {
-    const snapshot = await db.ref('players').once('value');
-    players = [];
-    snapshot.forEach(child => {
-        players.push({ id: child.key, ...child.val() });
-    });
-    players.sort((a,b) => a.name.localeCompare(b.name));
-    updateAllSelects();
-    updateMembersList();
-    updateNextMatch();
+    try {
+        const snapshot = await db.ref('players').once('value');
+        players = [];
+        snapshot.forEach(child => {
+            players.push({ id: child.key, ...child.val() });
+        });
+        players.sort((a,b) => (a.name || '').localeCompare(b.name || ''));
+        console.log("Jogadores carregados:", players.length);
+        updateAllSelects();
+        updateMembersList();
+        updateNextMatch();
+    } catch (error) {
+        console.error("Erro:", error);
+        showToast("Erro ao carregar jogadores");
+    }
 }
 
 async function loadMatches() {
     const snapshot = await db.ref('matches').once('value');
     matches = [];
-    snapshot.forEach(child => {
-        matches.push({ id: child.key, ...child.val() });
-    });
-    matches.sort((a,b) => b.timestamp - a.timestamp);
+    snapshot.forEach(child => { matches.push({ id: child.key, ...child.val() }); });
+    matches.sort((a,b) => (b.timestamp || 0) - (a.timestamp || 0));
     updateRankings();
     updateRecentMatches();
     updateDeleteSelect();
@@ -562,10 +507,8 @@ async function loadMatches() {
 async function loadCheckins() {
     const snapshot = await db.ref('checkins').once('value');
     checkins = [];
-    snapshot.forEach(child => {
-        checkins.push(child.val());
-    });
-    checkins.sort((a,b) => b.timestamp - a.timestamp);
+    snapshot.forEach(child => { checkins.push(child.val()); });
+    checkins.sort((a,b) => (b.timestamp || 0) - (a.timestamp || 0));
     updateCheckinsList();
     updateNextMatch();
 }
@@ -573,23 +516,10 @@ async function loadCheckins() {
 async function loadLosers() {
     const snapshot = await db.ref('losers').once('value');
     losers = [];
-    snapshot.forEach(child => {
-        losers.push({ id: child.key, ...child.val() });
-    });
-    losers.sort((a,b) => b.timestamp - a.timestamp);
+    snapshot.forEach(child => { losers.push({ id: child.key, ...child.val() }); });
     updateLosersList();
 }
 
-async function loadHighlights() {
-    const snapshot = await db.ref('highlights').limitToLast(1).once('value');
-    snapshot.forEach(child => {
-        const h = child.val();
-        document.getElementById("highlight-img").src = h.url;
-        document.getElementById("highlight-img").style.display = "block";
-    });
-}
-
-// ATUALIZAR SELECTS
 function updateAllSelects() {
     const selects = ["player1", "player2", "dupla1", "dupla2", "dupla3", "dupla4", 
                      "checkin-select", "loser-select", "remove-player-select", "delete-match-select"];
@@ -597,7 +527,7 @@ function updateAllSelects() {
         const el = document.getElementById(id);
         if(el && el.tagName === 'SELECT') {
             el.innerHTML = '<option value="">Selecione</option>' + 
-                players.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+                players.map(p => `<option value="${p.id}">${p.name || '?'}</option>`).join('');
         }
     });
 }
@@ -610,7 +540,7 @@ function updateMembersList() {
         div.innerHTML = players.map(p => `
             <div class="player-item">
                 <div class="flex-row">
-                    <img src="${p.photoUrl || 'https://via.placeholder.com/40'}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;">
+                    <img src="${p.photoUrl || 'https://via.placeholder.com/35'}" style="width:35px;height:35px;border-radius:8px;object-fit:cover;">
                     <span><strong>${p.name}</strong></span>
                 </div>
             </div>
@@ -618,7 +548,6 @@ function updateMembersList() {
     }
 }
 
-// PRÓXIMO DUELO COM FOTOS
 function updateNextMatch() {
     const hoje = new Date().toDateString();
     const checkinsHoje = checkins.filter(c => c.date && new Date(c.date).toDateString() === hoje);
@@ -630,8 +559,7 @@ function updateNextMatch() {
     const statusDiv = document.getElementById("next-match-status");
     
     if(checkinsHoje.length > 0 && checkinsHoje[0].date) {
-        const matchDate = new Date(checkinsHoje[0].date);
-        dateDiv.innerHTML = `📅 Data: ${matchDate.toLocaleDateString('pt-BR')}`;
+        dateDiv.innerHTML = `📅 DATA: ${new Date(checkinsHoje[0].date).toLocaleDateString('pt-BR')}`;
     } else {
         dateDiv.innerHTML = '';
     }
@@ -640,29 +568,23 @@ function updateNextMatch() {
         const p1 = confirmados[0], p2 = confirmados[1];
         container.innerHTML = `
             <div class="next-player">
-                <img src="${p1.photoUrl || 'https://via.placeholder.com/80'}" class="next-player-img" onerror="this.src='https://via.placeholder.com/80'">
+                <img src="${p1.photoUrl || 'https://via.placeholder.com/65'}" class="next-player-img" onerror="this.src='https://via.placeholder.com/65'">
                 <div class="next-player-name">${p1.name}</div>
             </div>
             <div class="vs-divider">VS</div>
             <div class="next-player">
-                <img src="${p2.photoUrl || 'https://via.placeholder.com/80'}" class="next-player-img" onerror="this.src='https://via.placeholder.com/80'">
+                <img src="${p2.photoUrl || 'https://via.placeholder.com/65'}" class="next-player-img" onerror="this.src='https://via.placeholder.com/65'">
                 <div class="next-player-name">${p2.name}</div>
             </div>
         `;
-        statusDiv.innerHTML = `✅ ${confirmados.length} jogadores confirmados para o duelo!`;
+        statusDiv.innerHTML = `✅ ${confirmados.length} jogadores confirmados`;
     } else {
         container.innerHTML = `
-            <div class="next-player">
-                <div class="next-player-img"><i class="fas fa-user-circle" style="font-size:60px; color:#CCC;"></i></div>
-                <div class="next-player-name">Aguardando</div>
-            </div>
+            <div class="next-player"><div class="next-player-img"><i class="fas fa-user" style="font-size:35px; color:#888; line-height:65px;"></i></div><div class="next-player-name">Aguardando</div></div>
             <div class="vs-divider">VS</div>
-            <div class="next-player">
-                <div class="next-player-img"><i class="fas fa-user-circle" style="font-size:60px; color:#CCC;"></i></div>
-                <div class="next-player-name">Aguardando</div>
-            </div>
+            <div class="next-player"><div class="next-player-img"><i class="fas fa-user" style="font-size:35px; color:#888; line-height:65px;"></i></div><div class="next-player-name">Aguardando</div></div>
         `;
-        statusDiv.innerHTML = `⏳ Aguardando check-ins... (${confirmados.length}/2)`;
+        statusDiv.innerHTML = `⏳ Aguardando check-ins (${confirmados.length}/2)`;
     }
 }
 
@@ -672,11 +594,11 @@ function updateLosersList() {
     const sorted = Object.entries(count).sort((a,b) => b[1] - a[1]).slice(0,5);
     const div = document.getElementById("losers-list");
     if(sorted.length === 0) {
-        div.innerHTML = "<div style='text-align:center;'>Nenhum perdedor ainda</div>";
+        div.innerHTML = "<div style='text-align:center;'>Nenhum perdedor</div>";
     } else {
         div.innerHTML = sorted.map(([id, c]) => {
             const p = players.find(p => p.id === id);
-            return `<div class="player-item">💀 ${p?.name} - 🍂 ${c} vez(es)</div>`;
+            return `<div class="player-item">💀 ${p?.name || '?'} - 🍂 ${c} vez(es)</div>`;
         }).join('');
     }
 }
@@ -685,12 +607,12 @@ function updateCheckinsList() {
     const div = document.getElementById("checkins-list");
     const recentes = checkins.slice(0, 10);
     if(recentes.length === 0) {
-        div.innerHTML = "Nenhum check-in ainda";
+        div.innerHTML = "Nenhum check-in";
     } else {
         div.innerHTML = recentes.map(c => {
             const p = players.find(p => p.id === c.playerId);
             const data = c.date ? new Date(c.date).toLocaleDateString() : 'Data?';
-            return `<div class="player-item" style="padding:8px;">📅 ${data} - ${p?.name || "?"}</div>`;
+            return `<div class="player-item" style="padding:8px;">📅 ${data} - ${p?.name || '?'}</div>`;
         }).join('');
     }
 }
@@ -702,13 +624,10 @@ function updateRecentMatches() {
         div.innerHTML = "<div style='text-align:center; padding:20px;'>Nenhuma partida</div>";
     } else {
         div.innerHTML = recentes.map(m => {
-            const winners = m.winners?.map(w => players.find(p => p.id === w)?.name).join("/");
-            const losers = m.losers?.map(l => players.find(p => p.id === l)?.name).join("/");
+            const winners = m.winners?.map(w => players.find(p => p.id === w)?.name).join("/") || '?';
+            const losers = m.losers?.map(l => players.find(p => p.id === l)?.name).join("/") || '?';
             const data = m.date ? new Date(m.date).toLocaleDateString() : 'Data?';
-            return `<div class="match-item">
-                        <div><strong>${winners}</strong> venceu <strong>${losers}</strong></div>
-                        <div style="font-size:0.7rem;">${m.result || "Placar"} - ${data}</div>
-                    </div>`;
+            return `<div class="match-item"><div><strong>${winners}</strong> venceu <strong>${losers}</strong></div><div style="font-size:0.7rem;">${m.result || 'Placar'} - ${data}</div></div>`;
         }).join('');
     }
 }
@@ -731,12 +650,8 @@ function updateRankings() {
     players.forEach(p => { stats[p.id] = { jogos: 0, vitorias: 0, derrotas: 0 }; });
     
     matches.forEach(m => {
-        if(m.winners) {
-            m.winners.forEach(w => { if(stats[w]) { stats[w].jogos++; stats[w].vitorias++; } });
-        }
-        if(m.losers) {
-            m.losers.forEach(l => { if(stats[l]) { stats[l].jogos++; stats[l].derrotas++; } });
-        }
+        if(m.winners) { m.winners.forEach(w => { if(stats[w]) { stats[w].jogos++; stats[w].vitorias++; } }); }
+        if(m.losers) { m.losers.forEach(l => { if(stats[l]) { stats[l].jogos++; stats[l].derrotas++; } }); }
     });
     
     const sorted = Object.entries(stats).sort((a,b) => b[1].vitorias - a[1].vitorias);
@@ -747,10 +662,7 @@ function updateRankings() {
         divSimples.innerHTML = sorted.map(([id, s]) => {
             const p = players.find(p => p.id === id);
             const perc = s.jogos > 0 ? ((s.vitorias/s.jogos)*100).toFixed(0) : 0;
-            return `<div class="ranking-item">
-                        <span><strong>${p?.name || "?"}</strong></span>
-                        <span>🏆 ${s.vitorias}V | ${s.derrotas}D (${perc}%)</span>
-                    </div>`;
+            return `<div class="ranking-item"><span><strong>${p?.name || '?'}</strong></span><span>🏆 ${s.vitorias}V | ${s.derrotas}D (${perc}%)</span></div>`;
         }).join('');
     }
     
@@ -770,15 +682,12 @@ function updateRankings() {
             const ids = key.split("_");
             const p1 = players.find(p => p.id === ids[0]);
             const p2 = players.find(p => p.id === ids[1]);
-            return `<div class="ranking-item">
-                        <span>${p1?.name || "?"} / ${p2?.name || "?"}</span>
-                        <span>🏆 ${wins} título(s)</span>
-                    </div>`;
+            return `<div class="ranking-item"><span>${p1?.name || '?'} / ${p2?.name || '?'}</span><span>🏆 ${wins}</span></div>`;
         }).join('');
     }
 }
 
-// ==================== AÇÕES ====================
+// Ações Principais
 async function addNewPlayer() {
     const name = document.getElementById("player-name").value.trim();
     const file = document.getElementById("player-photo-file").files[0];
@@ -795,11 +704,7 @@ async function addNewPlayer() {
             photoUrl = await storageRef.getDownloadURL();
         }
         
-        await db.ref('players').push({
-            name: name,
-            photoUrl: photoUrl || null,
-            createdAt: new Date().toISOString()
-        });
+        await db.ref('players').push({ name: name, photoUrl: photoUrl, createdAt: new Date().toISOString() });
         
         showToast(`✅ Jogador ${name} adicionado!`);
         document.getElementById("player-name").value = "";
@@ -807,6 +712,7 @@ async function addNewPlayer() {
         document.getElementById("player-photo-preview").innerHTML = "";
         await loadPlayers();
     } catch (error) {
+        console.error(error);
         showToast("Erro: " + error.message);
     }
 }
@@ -868,7 +774,6 @@ async function saveMatch() {
         if(setsP1 > setsP2) { winners = [p1]; losers = [p2]; }
         else if(setsP2 > setsP1) { winners = [p2]; losers = [p1]; }
         else { showToast("Empate!"); return; }
-        
         playersList = [p1, p2];
     } else {
         const a1 = document.getElementById("dupla1").value;
@@ -892,7 +797,6 @@ async function saveMatch() {
         if(setsA > setsB) { winners = [a1, a2]; losers = [b1, b2]; }
         else if(setsB > setsA) { winners = [b1, b2]; losers = [a1, a2]; }
         else { showToast("Empate!"); return; }
-        
         playersList = [a1, a2, b1, b2];
     }
     
@@ -903,10 +807,7 @@ async function saveMatch() {
     const result = sets.join(" • ");
     
     try {
-        await db.ref('matches').push({
-            type: type, players: playersList, winners: winners, losers: losers,
-            result: result, date: new Date().toISOString(), timestamp: Date.now()
-        });
+        await db.ref('matches').push({ type, players: playersList, winners, losers, result, date: new Date().toISOString(), timestamp: Date.now() });
         showToast("🎾 Partida registrada!");
         document.getElementById("set1a").value = ""; document.getElementById("set1b").value = "";
         document.getElementById("set2a").value = ""; document.getElementById("set2b").value = "";
@@ -939,18 +840,16 @@ async function uploadPhoto() {
     } catch (error) { showToast("Erro: " + error.message); }
 }
 
-// ==================== PREVIEW FOTO ====================
+// Preview
 document.getElementById("player-photo-file").addEventListener("change", (e) => {
     if(e.target.files[0]) {
         const reader = new FileReader();
-        reader.onload = (ev) => {
-            document.getElementById("player-photo-preview").innerHTML = `<img src="${ev.target.result}" class="photo-preview">`;
-        };
+        reader.onload = (ev) => { document.getElementById("player-photo-preview").innerHTML = `<img src="${ev.target.result}" class="photo-preview">`; };
         reader.readAsDataURL(e.target.files[0]);
     }
 });
 
-// ==================== TABS ====================
+// Tabs
 function setupTabs() {
     const btns = document.querySelectorAll(".menu-btn");
     const tabs = ["home-tab", "placar-tab", "rankings-tab", "admin-tab"];
@@ -972,7 +871,6 @@ function bindEvents() {
     document.getElementById("save-match").onclick = saveMatch;
     document.getElementById("delete-match").onclick = deleteMatch;
     document.getElementById("upload-photo").onclick = uploadPhoto;
-    
     document.getElementById("match-type").onchange = () => {
         const isDuplas = document.getElementById("match-type").value === "duplas";
         document.getElementById("simples-area").classList.toggle("hidden", isDuplas);
@@ -980,9 +878,7 @@ function bindEvents() {
     };
 }
 
-// ==================== INICIALIZAÇÃO ====================
 document.addEventListener("DOMContentLoaded", async () => {
-    console.log("🚀 Iniciando...");
     setupTabs();
     bindEvents();
     document.getElementById("checkin-date").value = new Date().toISOString().split('T')[0];
@@ -990,8 +886,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     await loadMatches();
     await loadCheckins();
     await loadLosers();
-    await loadHighlights();
-    console.log("✅ Pronto!");
 });
 </script>
 </body>
