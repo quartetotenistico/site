@@ -5,6 +5,7 @@
     let players = [];
     let matches = [];
     let checkins = [];
+    let losers = [];
 
     async function loadPlayers() {
         const q = query(collection(db, "players"), orderBy("name"));
@@ -13,15 +14,17 @@
         renderAllPlayerSelects();
         renderPlayersListAdmin();
         updateNextMatchDisplay();
+        updateRankingTable();
     }
 
     async function loadMatches() {
         const q = query(collection(db, "matches"), orderBy("date", "desc"));
         const snap = await getDocs(q);
         matches = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-        updateRankings();
-        updateLosersRanking();
+        updateRankingTable();
+        updateRankingDuplas();
         updateHighlights();
+        loadLosers();
     }
 
     async function loadCheckins() {
@@ -32,8 +35,15 @@
         updateNextMatchDisplay();
     }
 
+    async function loadLosers() {
+        const q = query(collection(db, "losers"), orderBy("timestamp", "desc"));
+        const snap = await getDocs(q);
+        losers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        renderLosersRanking();
+    }
+
     function renderAllPlayerSelects() {
-        const selects = ["player1","player2","player3","player4","winner-select","checkin-player-select","delete-player-select"];
+        const selects = ["player1","player2","player3","player4","winner-select","checkin-player-select","delete-player-select","loser-select"];
         selects.forEach(id => {
             const sel = document.getElementById(id);
             if(sel) sel.innerHTML = '<option value="">Selecione</option>' + players.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
@@ -42,7 +52,28 @@
 
     function renderPlayersListAdmin() {
         const div = document.getElementById("players-list-admin");
-        if(div) div.innerHTML = players.map(p => `<div class="player-item"><div style="display:flex; gap:10px; align-items:center;">${p.photoUrl ? `<img src="${p.photoUrl}" class="player-photo-sm">` : `<i class="fas fa-user-circle" style="font-size:32px;"></i>`}<span>${p.name}</span></div></div>`).join('');
+        if(div) div.innerHTML = players.map(p => `<div style="display:flex; align-items:center; gap:10px; padding:8px; border-bottom:1px solid #F0E0D0;"><img src="${p.photoUrl || 'https://via.placeholder.com/32'}" style="width:32px;height:32px;border-radius:32px;"><span>${p.name}</span></div>`).join('');
+    }
+
+    function renderLosersRanking() {
+        // Conta quantas vezes cada jogador foi hostilizado como perdedor da rodada
+        const loserCount = {};
+        losers.forEach(l => { loserCount[l.playerId] = (loserCount[l.playerId] || 0) + 1; });
+        const sorted = Object.entries(loserCount).sort((a,b) => b[1] - a[1]).slice(0,5);
+        const div = document.getElementById("losers-ranking");
+        div.innerHTML = `<div style="font-weight:700; margin-bottom:8px;">🏆 RANKING PERDEDORES 🏆</div>` + 
+            sorted.map(([id, count]) => `<div class="ranking-item loser-item" style="display:flex; justify-content:space-between; padding:8px; background:#FFF0E8; border-radius:40px; margin-bottom:5px;"><span>💀 ${players.find(p=>p.id===id)?.name || "?"}</span><span>🍂 ${count} vez(es)</span></div>`).join("") || "<div>Nenhum perdedor registrado</div>";
+    }
+
+    async function registerLoser(playerId) {
+        if(!playerId) return;
+        await addDoc(collection(db, "losers"), {
+            playerId: playerId,
+            date: new Date().toISOString(),
+            timestamp: Date.now()
+        });
+        alert("💀 Perdedor hostilizado com sucesso!");
+        loadLosers();
     }
 
     async function saveMatch() {
@@ -53,6 +84,12 @@
         let playersArray = [p1,p2];
         let winnersArray = [winnerId];
         let losersArray = [];
+        
+        // Resultados
+        const set1 = document.getElementById("set1").value;
+        const set2 = document.getElementById("set2").value;
+        const set3 = document.getElementById("set3").value;
+        const result = `${set1} ${set2} ${set3}`.trim();
         
         if(type === "duplas") {
             const p3 = document.getElementById("player3").value;
@@ -66,41 +103,83 @@
             losersArray = playersArray.filter(p => p !== winnerId);
         }
         
-        await addDoc(collection(db,"matches"), { type, players: playersArray, winners: winnersArray, losers: losersArray, date: new Date().toISOString(), timestamp: Date.now() });
+        await addDoc(collection(db,"matches"), { 
+            type, 
+            players: playersArray, 
+            winners: winnersArray, 
+            losers: losersArray,
+            result: result,
+            date: new Date().toISOString(), 
+            timestamp: Date.now() 
+        });
         alert("Partida registrada!");
         loadMatches();
     }
     
-    function updateRankings() {
-        let wins = {};
-        matches.forEach(m => { if(m.type==="simples") m.winners.forEach(w=>wins[w]=(wins[w]||0)+1); });
-        const div = document.getElementById("ranking-simples");
-        div.innerHTML = Object.entries(wins).sort((a,b)=>b[1]-a[1]).map(([pid,w])=>`<div class="ranking-item"><span>${players.find(p=>p.id===pid)?.name||"?"}</span><span class="rank-points">🏆 ${w} vitórias</span></div>`).join("") || "<div class='ranking-item'>Nenhuma partida</div>";
+    function updateRankingTable() {
+        const stats = {};
+        players.forEach(p => { stats[p.id] = { jogos: 0, vitorias: 0, derrotas: 0 }; });
         
-        let duplaWins = {};
-        matches.forEach(m => { if(m.type==="duplas" && m.winners.length===2) { const key = [m.winners[0],m.winners[1]].sort().join("_"); duplaWins[key]=(duplaWins[key]||0)+1; } });
-        const duplaDiv = document.getElementById("ranking-duplas");
-        duplaDiv.innerHTML = Object.entries(duplaWins).sort((a,b)=>b[1]-a[1]).map(([key,w])=>{ const ids=key.split("_"); return `<div class="ranking-item"><span>${players.find(p=>p.id===ids[0])?.name} / ${players.find(p=>p.id===ids[1])?.name}</span><span class="rank-points">🏆 ${w} títulos</span></div>`; }).join("") || "<div class='ranking-item'>Nenhuma dupla</div>";
+        matches.forEach(m => {
+            m.winners.forEach(w => { 
+                stats[w].jogos += 1;
+                stats[w].vitorias += 1;
+            });
+            m.losers.forEach(l => { 
+                stats[l].jogos += 1;
+                stats[l].derrotas += 1;
+            });
+        });
+        
+        const sorted = Object.entries(stats).sort((a,b) => b[1].vitorias - a[1].vitorias);
+        const tbody = document.getElementById("ranking-body");
+        tbody.innerHTML = sorted.map(([id, s], idx) => {
+            const player = players.find(p => p.id === id);
+            const percent = s.jogos > 0 ? ((s.vitorias / s.jogos) * 100).toFixed(0) : 0;
+            return `<tr>
+                <td class="rank-pos">${idx+1}º</td>
+                <td><div class="player-cell"><img src="${player?.photoUrl || 'https://via.placeholder.com/32'}" class="player-photo-sm"><span>${player?.name || "?"}</span></div></td>
+                <td>${s.jogos}</td>
+                <td style="color:#2E7D32;">${s.vitorias}</td>
+                <td style="color:#D96C1A;">${s.derrotas}</td>
+                <td>${percent}%</td>
+            </tr>`;
+        }).join("");
+        if(!sorted.length) tbody.innerHTML = "<tr><td colspan='6'>Nenhuma partida registrada</td></tr>";
     }
 
-    function updateLosersRanking() {
-        let losses = {};
-        matches.forEach(m => m.losers.forEach(l=>losses[l]=(losses[l]||0)+1));
-        const div = document.getElementById("losers-ranking");
-        const topLosers = Object.entries(losses).sort((a,b)=>b[1]-a[1]).slice(0,5);
-        div.innerHTML = topLosers.map(([pid,loss])=>`<div class="ranking-item loser-item"><span>💀 ${players.find(p=>p.id===pid)?.name||"?"}</span><span class="rank-points">🍂 ${loss} derrota(s)</span></div>`).join("") || "<div class='ranking-item'>Ninguém perdeu ainda</div>";
+    function updateRankingDuplas() {
+        let duplaWins = {};
+        matches.forEach(m => {
+            if(m.type === "duplas" && m.winners.length === 2) {
+                const key = [m.winners[0], m.winners[1]].sort().join("_");
+                duplaWins[key] = (duplaWins[key] || 0) + 1;
+            }
+        });
+        const sorted = Object.entries(duplaWins).sort((a,b) => b[1] - a[1]);
+        const div = document.getElementById("ranking-duplas");
+        div.innerHTML = sorted.map(([key, wins]) => {
+            const ids = key.split("_");
+            const p1 = players.find(p=>p.id===ids[0]);
+            const p2 = players.find(p=>p.id===ids[1]);
+            return `<div class="ranking-item" style="display:flex; justify-content:space-between; padding:12px; background:#FFF8F0; border-radius:40px; margin-bottom:8px;"><span>${p1?.name} / ${p2?.name}</span><span>🏆 ${wins} títulos</span></div>`;
+        }).join("") || "<div>Nenhuma dupla registrada</div>";
     }
     
     async function updateHighlights() {
         const snap = await getDocs(query(collection(db,"highlights"), orderBy("timestamp","desc")));
-        if(!snap.empty) { const last=snap.docs[0].data(); document.getElementById("highlights-img").src=last.url; document.getElementById("highlights-desc").innerHTML=last.desc; }
+        if(!snap.empty) { 
+            const last = snap.docs[0].data(); 
+            document.getElementById("highlights-img").src = last.url; 
+            document.getElementById("highlights-desc").innerHTML = last.desc || "Momento épico!";
+        }
     }
     
     async function uploadPhoto(file) {
         if(!file) return;
-        const ref = ref(storage, `highlights/${Date.now()}_${file.name}`);
-        await uploadBytes(ref, file);
-        await addDoc(collection(db,"highlights"), { url: await getDownloadURL(ref), desc: "🎾 Momento épico", timestamp: Date.now() });
+        const refFile = ref(storage, `highlights/${Date.now()}_${file.name}`);
+        await uploadBytes(refFile, file);
+        await addDoc(collection(db,"highlights"), { url: await getDownloadURL(refFile), desc: "🎾 Momento do Quarteto Tenístico", timestamp: Date.now() });
         alert("Foto destacada!");
         updateHighlights();
     }
@@ -123,7 +202,6 @@
         const todayCheckins = checkins.filter(c => new Date(c.date).toDateString() === new Date().toDateString());
         const checkedIds = todayCheckins.map(c => c.playerId);
         const available = players.filter(p => checkedIds.includes(p.id));
-        
         const container = document.getElementById("next-match-players-container");
         const statusDiv = document.getElementById("next-match-status");
         
@@ -131,23 +209,23 @@
             const p1 = available[0], p2 = available[1];
             container.innerHTML = `
                 <div class="next-player">
-                    ${p1.photoUrl ? `<img src="${p1.photoUrl}" class="next-player-photo">` : `<div class="next-player-photo" style="background:#D96C1A20; display:flex; align-items:center; justify-content:center;"><i class="fas fa-user-circle" style="font-size:50px; color:#D96C1A;"></i></div>`}
+                    ${p1.photoUrl ? `<img src="${p1.photoUrl}" class="next-player-photo">` : `<div class="next-player-photo" style="background:#F0E0D0; display:flex; align-items:center; justify-content:center;"><i class="fas fa-user-circle" style="font-size:50px; color:#F47B20;"></i></div>`}
                     <div class="next-player-name">${p1.name}</div>
                 </div>
                 <div class="vs-divider">VS</div>
                 <div class="next-player">
-                    ${p2.photoUrl ? `<img src="${p2.photoUrl}" class="next-player-photo">` : `<div class="next-player-photo" style="background:#D96C1A20; display:flex; align-items:center; justify-content:center;"><i class="fas fa-user-circle" style="font-size:50px; color:#D96C1A;"></i></div>`}
+                    ${p2.photoUrl ? `<img src="${p2.photoUrl}" class="next-player-photo">` : `<div class="next-player-photo" style="background:#F0E0D0; display:flex; align-items:center; justify-content:center;"><i class="fas fa-user-circle" style="font-size:50px; color:#F47B20;"></i></div>`}
                     <div class="next-player-name">${p2.name}</div>
                 </div>
             `;
             statusDiv.innerHTML = `✅ Jogo confirmado! (${available.length} jogadores check-in)`;
         } else {
             container.innerHTML = `
-                <div class="next-player"><div class="next-player-photo"><i class="fas fa-question" style="font-size:30px;"></i></div><div class="next-player-name">Aguardando</div></div>
+                <div class="next-player"><div class="next-player-photo"><i class="fas fa-question" style="font-size:30px; color:#F47B20;"></i></div><div class="next-player-name">Aguardando</div></div>
                 <div class="vs-divider">VS</div>
-                <div class="next-player"><div class="next-player-photo"><i class="fas fa-question" style="font-size:30px;"></i></div><div class="next-player-name">Aguardando</div></div>
+                <div class="next-player"><div class="next-player-photo"><i class="fas fa-question" style="font-size:30px; color:#F47B20;"></i></div><div class="next-player-name">Aguardando</div></div>
             `;
-            statusDiv.innerHTML = `⏳ Aguardando mais check-ins... (${available.length}/2 jogadores)`;
+            statusDiv.innerHTML = `⏳ Aguardando check-ins... (${available.length}/2 jogadores)`;
         }
     }
     
@@ -178,11 +256,14 @@
         await loadPlayers();
         await loadMatches();
         await loadCheckins();
+        await loadLosers();
+        
         document.getElementById("save-match").onclick = saveMatch;
         document.getElementById("add-player").onclick = () => addPlayerWithPhoto(document.getElementById("new-player-name").value, document.getElementById("player-photo").files[0]);
         document.getElementById("delete-player").onclick = () => deletePlayer(document.getElementById("delete-player-select").value);
         document.getElementById("do-checkin").onclick = () => doCheckin(document.getElementById("checkin-player-select").value);
         document.getElementById("upload-photo-btn").onclick = () => uploadPhoto(document.getElementById("match-photo").files[0]);
+        document.getElementById("register-loser").onclick = () => registerLoser(document.getElementById("loser-select").value);
         document.getElementById("match-type").onchange = (e) => document.getElementById("duplas-fields").classList.toggle("hidden", e.target.value !== "duplas");
     });
 })();
