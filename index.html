@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="theme-color" content="#C74B1E">
-    <title>Quarteto Tenístico | Roland Garros Style</title>
+    <meta name="theme-color" content="#F47B20">
+    <title>Quarteto Tenístico | Ranking Oficial</title>
     <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="quarteto-tenistico.png">
-    <!-- Fontes oficiais Roland Garros -->
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;600;700&family=Roboto:wght@300;400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="apple-touch-icon" href="quarteto tenistico.png">
+    <!-- Fontes -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <!-- Firebase SDK -->
@@ -16,18 +16,22 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, addDoc, query, orderBy, getDocs, deleteDoc, doc, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
         
-        // 🔥 SUBSTITUA PELAS SUAS CREDENCIAIS DO FIREBASE
+        // Firebase Configuration
         const firebaseConfig = {
-            apiKey: "SUA_API_KEY",
-            authDomain: "SEU_AUTH_DOMAIN",
-            projectId: "SEU_PROJECT_ID",
-            storageBucket: "SEU_STORAGE_BUCKET",
-            messagingSenderId: "SEU_SENDER_ID",
-            appId: "SEU_APP_ID"
+            apiKey: "AIzaSyC1HCA84bAsQWsf1y0c85gXZ2_Jn6_syaU",
+            authDomain: "quartetotenistico-9c9ab.firebaseapp.com",
+            databaseURL: "https://quartetotenistico-9c9ab-default-rtdb.firebaseio.com",
+            projectId: "quartetotenistico-9c9ab",
+            storageBucket: "quartetotenistico-9c9ab.firebasestorage.app",
+            messagingSenderId: "791700433774",
+            appId: "1:791700433774:web:ea08cc0ad6c1cc045fef7f",
+            measurementId: "G-VY5H7867HJ"
         };
         
         const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
         const db = getFirestore(app);
         const storage = getStorage(app);
         
@@ -55,95 +59,78 @@
 
         body {
             font-family: 'Roboto', sans-serif;
+            background: #FFFFFF;
             min-height: 100vh;
-            background: #2A1A0E;
         }
 
-        /* Fundo com imagem profissional de quadra Roland Garros */
-        .roland-bg {
+        /* Fundo suave com textura de saibro sutil */
+        .clay-bg {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: url('https://images.pexels.com/photos/1263121/tennis-court-red-clay-1263121.jpg?auto=compress&cs=tinysrgb&w=1600');
-            background-size: cover;
-            background-position: center 40%;
-            background-repeat: no-repeat;
-            z-index: -2;
-        }
-
-        .roland-bg::after {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.65);
-            z-index: -1;
-        }
-
-        /* Textura de saibro */
-        .clay-texture {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: radial-gradient(circle at 25% 40%, rgba(200,100,40,0.15) 1px, transparent 1px);
-            background-size: 35px 35px;
+            background-image: radial-gradient(circle at 25% 40%, rgba(244,123,32,0.08) 1px, transparent 1px);
+            background-size: 40px 40px;
             pointer-events: none;
             z-index: -1;
         }
 
         .container {
-            max-width: 680px;
+            max-width: 700px;
             margin: 0 auto;
-            padding: 20px 16px 100px 16px;
-            position: relative;
-            z-index: 2;
+            padding: 20px 16px 90px 16px;
         }
 
-        /* ===== HEADER ===== */
-        .rg-header {
+        /* ===== HEADER COM LOGO ===== */
+        .header {
             text-align: center;
-            margin-bottom: 24px;
+            margin-bottom: 28px;
+            padding: 20px 16px;
+            background: #FFF8F0;
+            border-radius: 20px;
+            border-bottom: 3px solid #F47B20;
         }
 
-        .rg-header h1 {
+        .logo-img {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            margin-bottom: 12px;
+        }
+
+        .header h1 {
             font-family: 'Roboto Condensed', sans-serif;
-            font-size: 2.2rem;
+            font-size: 1.8rem;
             font-weight: 700;
+            color: #F47B20;
             letter-spacing: -0.5px;
-            color: #FFB347;
-            text-shadow: 0 2px 5px rgba(0,0,0,0.5);
         }
 
-        .rg-header .sub {
-            font-family: 'Roboto', sans-serif;
+        .header .sub {
             font-size: 0.7rem;
-            color: #E0B080;
+            color: #D96C1A;
             text-transform: uppercase;
             letter-spacing: 2px;
         }
 
-        /* ===== PRÓXIMO JOGO - DESTAQUE NO TOPO ===== */
+        /* ===== PRÓXIMO JOGO CARD ===== */
         .next-match-card {
-            background: rgba(0,0,0,0.75);
-            backdrop-filter: blur(12px);
+            background: #FFF8F0;
             border-radius: 20px;
-            padding: 24px;
+            padding: 20px;
             margin-bottom: 24px;
-            border: 1px solid #D96C1A;
+            border: 1px solid #F47B20;
             text-align: center;
+            box-shadow: 0 4px 12px rgba(244,123,32,0.1);
         }
 
         .next-match-title {
             font-family: 'Roboto Condensed', sans-serif;
             font-size: 0.85rem;
             letter-spacing: 2px;
-            color: #FFB347;
+            color: #F47B20;
+            font-weight: 700;
             margin-bottom: 16px;
         }
 
@@ -164,67 +151,57 @@
             height: 80px;
             border-radius: 80px;
             object-fit: cover;
-            border: 3px solid #D96C1A;
-            background: #2A1A0E;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+            border: 3px solid #F47B20;
+            background: #F0E0D0;
         }
 
         .next-player-name {
             margin-top: 10px;
             font-weight: 700;
-            color: #FFF;
-            font-size: 1rem;
+            color: #4A2A1A;
         }
 
         .vs-divider {
             font-family: 'Roboto Condensed', sans-serif;
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             font-weight: 800;
-            color: #D96C1A;
-            background: rgba(0,0,0,0.5);
-            padding: 5px 12px;
+            color: #F47B20;
+            background: #FFF0E0;
+            padding: 5px 15px;
             border-radius: 40px;
         }
 
-        .checkin-status {
-            margin-top: 16px;
-            font-size: 0.75rem;
-            color: #CCC;
-        }
-
-        /* ===== CARDS COM ÍCONES SVG ===== */
+        /* ===== CARDS ===== */
         .card {
-            background: rgba(30,22,16,0.88);
-            backdrop-filter: blur(10px);
+            background: #FFFFFF;
             border-radius: 16px;
             padding: 20px;
             margin-bottom: 20px;
-            border: 1px solid rgba(217,108,26,0.4);
-            transition: all 0.2s;
+            border: 1px solid #E8DCC8;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
 
         .card-header {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             margin-bottom: 18px;
             font-family: 'Roboto Condensed', sans-serif;
             font-size: 1.2rem;
             font-weight: 700;
-            color: #FFB347;
-            border-left: 3px solid #D96C1A;
+            color: #F47B20;
+            border-left: 3px solid #F47B20;
             padding-left: 12px;
         }
 
-        .card-header svg {
-            width: 24px;
-            height: 24px;
-            fill: #D96C1A;
+        .card-header i {
+            font-size: 1.3rem;
+            color: #F47B20;
         }
 
-        /* Botões com degrade saibro */
-        .btn-clay {
-            background: linear-gradient(135deg, #D96C1A, #A23F0A);
+        /* Botões laranja */
+        .btn-orange {
+            background: #F47B20;
             border: none;
             padding: 12px 20px;
             border-radius: 40px;
@@ -237,52 +214,72 @@
             width: 100%;
         }
 
-        .btn-clay:active {
+        .btn-orange:active {
             transform: scale(0.97);
+            background: #D96C1A;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #F47B20;
+            color: #F47B20;
         }
 
         input, select {
             width: 100%;
             padding: 12px 16px;
             border-radius: 40px;
-            border: 1px solid #D96C1A;
-            background: #2A2018;
+            border: 1px solid #E8DCC8;
+            background: #FFFFFF;
             font-family: 'Roboto', sans-serif;
-            color: #FFF;
+            color: #4A2A1A;
             margin-bottom: 12px;
         }
 
-        .ranking-item {
-            background: #2A2018;
-            border-radius: 40px;
-            padding: 12px 16px;
-            margin-bottom: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-left: 3px solid #D96C1A;
+        input:focus, select:focus {
+            outline: none;
+            border-color: #F47B20;
         }
 
-        .loser-item {
-            background: #3A2010;
-            border-left-color: #FF6666;
+        /* Ranking tabela */
+        .ranking-table {
+            width: 100%;
+            border-collapse: collapse;
         }
 
-        .player-item {
-            background: #2A2018;
-            border-radius: 40px;
-            padding: 12px;
-            margin-bottom: 8px;
+        .ranking-table th, .ranking-table td {
+            padding: 12px 8px;
+            text-align: center;
+            border-bottom: 1px solid #F0E0D0;
+        }
+
+        .ranking-table th {
+            background: #FFF8F0;
+            color: #F47B20;
+            font-weight: 700;
+        }
+
+        .player-cell {
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            gap: 10px;
         }
 
         .player-photo-sm {
-            width: 36px;
-            height: 36px;
-            border-radius: 36px;
+            width: 32px;
+            height: 32px;
+            border-radius: 32px;
             object-fit: cover;
+        }
+
+        .rank-pos {
+            font-weight: 800;
+            color: #F47B20;
+        }
+
+        .loser-item {
+            background: #FFF0E8;
+            border-left: 3px solid #FF6666;
         }
 
         .highlights-img {
@@ -293,6 +290,17 @@
             object-fit: cover;
         }
 
+        .result-input {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .result-input input {
+            flex: 1;
+            text-align: center;
+        }
+
         .hidden { display: none; }
 
         /* Menu inferior */
@@ -301,12 +309,12 @@
             bottom: 0;
             left: 0;
             right: 0;
-            background: rgba(0,0,0,0.9);
-            backdrop-filter: blur(12px);
+            background: #FFFFFF;
             display: flex;
             justify-content: space-around;
             padding: 10px 16px;
-            border-top: 1px solid #D96C1A;
+            border-top: 2px solid #F47B20;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
         }
 
         .menu-btn {
@@ -317,7 +325,7 @@
             font-family: 'Roboto', sans-serif;
             font-weight: 600;
             font-size: 0.75rem;
-            color: #BBB;
+            color: #8B7355;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -326,112 +334,121 @@
         }
 
         .menu-btn.active {
-            color: #D96C1A;
+            color: #F47B20;
         }
 
         .menu-btn i { font-size: 1.2rem; }
     </style>
 </head>
 <body>
-<div class="roland-bg"></div>
-<div class="clay-texture"></div>
+<div class="clay-bg"></div>
 
 <div class="container">
-    <div class="rg-header">
+    <div class="header">
+        <img src="quarteto tenistico.png" alt="Logo" class="logo-img" onerror="this.src='https://via.placeholder.com/100?text=QT'">
         <h1>QUARTETO TENÍSTICO</h1>
-        <div class="sub">ROLAND GARROS • SAIBRO CLUB</div>
+        <div class="sub">ROLAND GARROS • RANKING OFICIAL</div>
     </div>
 
-    <!-- PRÓXIMO JOGO EM DESTAQUE -->
+    <!-- PRÓXIMO JOGO -->
     <div class="next-match-card" id="next-match-card">
         <div class="next-match-title">🎾 PRÓXIMO DUELO 🎾</div>
         <div id="next-match-players-container" class="next-match-players">
-            <div class="next-player">
-                <div class="next-player-photo" style="background:#D96C1A20; display:flex; align-items:center; justify-content:center;">
-                    <i class="fas fa-user-circle" style="font-size:50px; color:#D96C1A;"></i>
-                </div>
-                <div class="next-player-name">Aguardando</div>
-            </div>
+            <div class="next-player"><div class="next-player-photo"><i class="fas fa-user-circle" style="font-size:50px; color:#F47B20;"></i></div><div class="next-player-name">Aguardando</div></div>
             <div class="vs-divider">VS</div>
-            <div class="next-player">
-                <div class="next-player-photo" style="background:#D96C1A20; display:flex; align-items:center; justify-content:center;">
-                    <i class="fas fa-user-circle" style="font-size:50px; color:#D96C1A;"></i>
-                </div>
-                <div class="next-player-name">Aguardando</div>
-            </div>
+            <div class="next-player"><div class="next-player-photo"><i class="fas fa-user-circle" style="font-size:50px; color:#F47B20;"></i></div><div class="next-player-name">Aguardando</div></div>
         </div>
-        <div id="next-match-status" class="checkin-status">⏳ Aguardando check-ins...</div>
+        <div id="next-match-status" class="checkin-status" style="margin-top:12px; font-size:0.75rem; color:#D96C1A;"></div>
     </div>
 
     <div id="home-tab">
-        <!-- Troféu Perdedores -->
+        <!-- Adicionar Perdedor da Rodada -->
         <div class="card">
-            <div class="card-header">
-                <svg viewBox="0 0 24 24" width="24" height="24"><path d="M12 2L15 8.5L22 9.5L17 14L18.5 21L12 17.5L5.5 21L7 14L2 9.5L9 8.5L12 2Z" fill="#D96C1A"/></svg>
-                TROFÉU PERDEDORES 🏆💀
-            </div>
-            <div id="losers-ranking"></div>
+            <div class="card-header"><i class="fas fa-skull"></i> 🏆 PERDEDOR DA RODADA 🏆</div>
+            <select id="loser-select"></select>
+            <button class="btn-orange" id="register-loser">💀 Hostilizar Perdedor</button>
+            <div id="losers-ranking" style="margin-top:16px;"></div>
         </div>
 
         <div class="card">
-            <div class="card-header">
-                <svg viewBox="0 0 24 24" width="24" height="24"><circle cx="12" cy="12" r="10" stroke="#D96C1A" stroke-width="2" fill="none"/><path d="M12 8v4l3 3" stroke="#D96C1A" stroke-width="2" fill="none"/></svg>
-                Último Highlight
-            </div>
+            <div class="card-header"><i class="fas fa-film"></i> Último Highlight</div>
             <img id="highlights-img" class="highlights-img" src="">
-            <p id="highlights-desc" style="margin-top:10px; font-size:0.8rem; color:#CCC;"></p>
+            <p id="highlights-desc" style="margin-top:10px; font-size:0.8rem; color:#8B7355;"></p>
         </div>
 
         <div class="card">
-            <div class="card-header">
-                <svg viewBox="0 0 24 24" width="24" height="24"><path d="M20 12v8H4v-8M12 2v6M8 6l4-4 4 4" stroke="#D96C1A" stroke-width="2" fill="none"/></svg>
-                Check-in da Rodada
-            </div>
+            <div class="card-header"><i class="fas fa-check-circle"></i> Check-in da Rodada</div>
             <select id="checkin-player-select"></select>
-            <button class="btn-clay" id="do-checkin">✅ Marcar Presença</button>
+            <button class="btn-orange" id="do-checkin">✅ Marcar Presença</button>
             <div id="checkin-list" style="margin-top:16px; font-size:0.8rem;"></div>
         </div>
 
         <div class="card">
-            <div class="card-header">
-                <svg viewBox="0 0 24 24" width="24" height="24"><rect x="2" y="6" width="20" height="12" rx="2" stroke="#D96C1A" stroke-width="2" fill="none"/><circle cx="12" cy="12" r="2" fill="#D96C1A"/></svg>
-                Enviar Foto
-            </div>
+            <div class="card-header"><i class="fas fa-camera"></i> Enviar Foto</div>
             <input type="file" id="match-photo" accept="image/*">
-            <button class="btn-clay" id="upload-photo-btn">⭐ Destacar Momento</button>
+            <button class="btn-orange" id="upload-photo-btn">⭐ Destacar Momento</button>
         </div>
     </div>
 
     <div id="registro-tab" class="hidden">
         <div class="card">
-            <div class="card-header">📋 Registrar Partida</div>
-            <select id="match-type"><option value="simples">Simples</option><option value="duplas">Duplas</option></select>
-            <select id="player1"></select><select id="player2"></select>
-            <div id="duplas-fields" class="hidden"><select id="player3"></select><select id="player4"></select></div>
+            <div class="card-header"><i class="fas fa-clipboard-list"></i> Registrar Partida</div>
+            <select id="match-type">
+                <option value="simples">Simples</option>
+                <option value="duplas">Duplas</option>
+            </select>
+            <select id="player1"></select>
+            <select id="player2"></select>
+            <div id="duplas-fields" class="hidden">
+                <select id="player3"></select>
+                <select id="player4"></select>
+            </div>
             <select id="winner-select"></select>
-            <button class="btn-clay" id="save-match">Salvar Partida</button>
+            
+            <!-- Campo para resultado da partida -->
+            <div class="result-input">
+                <input type="text" id="set1" placeholder="1º set (ex: 6/4)">
+                <input type="text" id="set2" placeholder="2º set (ex: 7/5)">
+                <input type="text" id="set3" placeholder="3º set (opcional)">
+            </div>
+            
+            <button class="btn-orange" id="save-match">Salvar Partida</button>
         </div>
     </div>
 
     <div id="rankings-tab" class="hidden">
-        <div class="card"><div class="card-header">🏆 Ranking Simples</div><div id="ranking-simples"></div></div>
-        <div class="card"><div class="card-header">👥 Ranking Duplas</div><div id="ranking-duplas"></div></div>
+        <div class="card">
+            <div class="card-header"><i class="fas fa-trophy"></i> Ranking Geral</div>
+            <table class="ranking-table" id="ranking-table">
+                <thead>
+                    <tr><th>Pos</th><th>Jogador</th><th>Jogos</th><th>Vitórias</th><th>Derrotas</th><th>%</th></tr>
+                </thead>
+                <tbody id="ranking-body"></tbody>
+            </table>
+        </div>
+        <div class="card">
+            <div class="card-header"><i class="fas fa-users"></i> Ranking Duplas</div>
+            <div id="ranking-duplas"></div>
+        </div>
     </div>
 
     <div id="admin-tab" class="hidden">
         <div class="card">
-            <div class="card-header">➕ Adicionar Jogador + Foto</div>
-            <input type="text" id="new-player-name" placeholder="Nome">
+            <div class="card-header"><i class="fas fa-user-plus"></i> Adicionar Jogador + Foto</div>
+            <input type="text" id="new-player-name" placeholder="Nome completo">
             <input type="file" id="player-photo" accept="image/*">
             <div id="photo-preview"></div>
-            <button class="btn-clay" id="add-player">Adicionar</button>
+            <button class="btn-orange" id="add-player">Adicionar Jogador</button>
         </div>
         <div class="card">
-            <div class="card-header">🗑️ Remover Jogador</div>
+            <div class="card-header"><i class="fas fa-user-minus"></i> Remover Jogador</div>
             <select id="delete-player-select"></select>
-            <button class="btn-clay" id="delete-player">Remover</button>
+            <button class="btn-orange btn-outline" id="delete-player">Remover</button>
         </div>
-        <div class="card"><div class="card-header">📋 Membros</div><div id="players-list-admin"></div></div>
+        <div class="card">
+            <div class="card-header"><i class="fas fa-list"></i> Membros do Clube</div>
+            <div id="players-list-admin"></div>
+        </div>
     </div>
 
     <div class="bottom-menu">
