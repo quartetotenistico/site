@@ -14,7 +14,7 @@
     <!-- Firebase SDK -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, query, orderBy, getDocs, deleteDoc, doc, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, query, orderBy, getDocs, deleteDoc, doc, where, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
         
@@ -45,9 +45,13 @@
         window.deleteDoc = deleteDoc;
         window.doc = doc;
         window.where = where;
+        window.getDoc = getDoc;
+        window.updateDoc = updateDoc;
         window.ref = ref;
         window.uploadBytes = uploadBytes;
         window.getDownloadURL = getDownloadURL;
+        
+        console.log("Firebase inicializado com sucesso!");
     </script>
     
     <style>
@@ -63,14 +67,13 @@
             min-height: 100vh;
         }
 
-        /* Fundo suave com textura de saibro sutil */
         .clay-bg {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: radial-gradient(circle at 25% 40%, rgba(244,123,32,0.08) 1px, transparent 1px);
+            background-image: radial-gradient(circle at 25% 40%, rgba(244,123,32,0.06) 1px, transparent 1px);
             background-size: 40px 40px;
             pointer-events: none;
             z-index: -1;
@@ -82,7 +85,7 @@
             padding: 20px 16px 90px 16px;
         }
 
-        /* ===== HEADER COM LOGO ===== */
+        /* Header */
         .header {
             text-align: center;
             margin-bottom: 28px;
@@ -104,7 +107,6 @@
             font-size: 1.8rem;
             font-weight: 700;
             color: #F47B20;
-            letter-spacing: -0.5px;
         }
 
         .header .sub {
@@ -114,7 +116,7 @@
             letter-spacing: 2px;
         }
 
-        /* ===== PRÓXIMO JOGO CARD ===== */
+        /* Próximo Jogo */
         .next-match-card {
             background: #FFF8F0;
             border-radius: 20px;
@@ -122,7 +124,6 @@
             margin-bottom: 24px;
             border: 1px solid #F47B20;
             text-align: center;
-            box-shadow: 0 4px 12px rgba(244,123,32,0.1);
         }
 
         .next-match-title {
@@ -171,7 +172,7 @@
             border-radius: 40px;
         }
 
-        /* ===== CARDS ===== */
+        /* Cards */
         .card {
             background: #FFFFFF;
             border-radius: 16px;
@@ -199,7 +200,7 @@
             color: #F47B20;
         }
 
-        /* Botões laranja */
+        /* Botões */
         .btn-orange {
             background: #F47B20;
             border: none;
@@ -225,6 +226,10 @@
             color: #F47B20;
         }
 
+        .btn-green {
+            background: #2E7D32;
+        }
+
         input, select {
             width: 100%;
             padding: 12px 16px;
@@ -241,7 +246,48 @@
             border-color: #F47B20;
         }
 
-        /* Ranking tabela */
+        /* Placar específico */
+        .score-panel {
+            background: #FFF8F0;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .score-set {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .score-input {
+            text-align: center;
+            width: 100px;
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        .players-select {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .players-select select {
+            flex: 1;
+        }
+
+        .winner-badge {
+            background: #2E7D3220;
+            padding: 10px;
+            border-radius: 40px;
+            text-align: center;
+            margin: 10px 0;
+        }
+
         .ranking-table {
             width: 100%;
             border-collapse: collapse;
@@ -272,14 +318,14 @@
             object-fit: cover;
         }
 
-        .rank-pos {
-            font-weight: 800;
-            color: #F47B20;
-        }
-
         .loser-item {
             background: #FFF0E8;
             border-left: 3px solid #FF6666;
+            padding: 10px;
+            border-radius: 40px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
         }
 
         .highlights-img {
@@ -288,17 +334,6 @@
             margin-top: 12px;
             max-height: 200px;
             object-fit: cover;
-        }
-
-        .result-input {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        .result-input input {
-            flex: 1;
-            text-align: center;
         }
 
         .hidden { display: none; }
@@ -338,6 +373,26 @@
         }
 
         .menu-btn i { font-size: 1.2rem; }
+
+        .toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #4A2A1A;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            z-index: 100;
+            animation: fadeOut 2s ease-in-out;
+        }
+
+        @keyframes fadeOut {
+            0% { opacity: 1; }
+            70% { opacity: 1; }
+            100% { opacity: 0; visibility: hidden; }
+        }
     </style>
 </head>
 <body>
@@ -358,11 +413,11 @@
             <div class="vs-divider">VS</div>
             <div class="next-player"><div class="next-player-photo"><i class="fas fa-user-circle" style="font-size:50px; color:#F47B20;"></i></div><div class="next-player-name">Aguardando</div></div>
         </div>
-        <div id="next-match-status" class="checkin-status" style="margin-top:12px; font-size:0.75rem; color:#D96C1A;"></div>
+        <div id="next-match-status" style="margin-top:12px; font-size:0.75rem; color:#D96C1A;"></div>
     </div>
 
     <div id="home-tab">
-        <!-- Adicionar Perdedor da Rodada -->
+        <!-- Perdedor da Rodada -->
         <div class="card">
             <div class="card-header"><i class="fas fa-skull"></i> 🏆 PERDEDOR DA RODADA 🏆</div>
             <select id="loser-select"></select>
@@ -380,7 +435,7 @@
             <div class="card-header"><i class="fas fa-check-circle"></i> Check-in da Rodada</div>
             <select id="checkin-player-select"></select>
             <button class="btn-orange" id="do-checkin">✅ Marcar Presença</button>
-            <div id="checkin-list" style="margin-top:16px; font-size:0.8rem;"></div>
+            <div id="checkin-list" style="margin-top:16px;"></div>
         </div>
 
         <div class="card">
@@ -390,29 +445,62 @@
         </div>
     </div>
 
-    <div id="registro-tab" class="hidden">
+    <!-- ABA ESPECÍFICA PARA MARCAR PLACAR -->
+    <div id="placar-tab" class="hidden">
+        <div class="score-panel">
+            <div class="card-header"><i class="fas fa-chalkboard"></i> MARCAR PLACAR DA PARTIDA</div>
+            
+            <div class="players-select">
+                <select id="score-player1">
+                    <option value="">Selecione Jogador 1</option>
+                </select>
+                <select id="score-player2">
+                    <option value="">Selecione Jogador 2</option>
+                </select>
+            </div>
+            
+            <div style="margin: 10px 0; text-align: center; font-weight: bold;">📊 PLACAR DOS SETS</div>
+            
+            <div class="score-set">
+                <div style="text-align: center;">
+                    <div>1º SET</div>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="number" id="set1-p1" class="score-input" placeholder="J1" min="0" max="7">
+                        <span style="font-size:1.5rem;">x</span>
+                        <input type="number" id="set1-p2" class="score-input" placeholder="J2" min="0" max="7">
+                    </div>
+                </div>
+                <div style="text-align: center;">
+                    <div>2º SET</div>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="number" id="set2-p1" class="score-input" placeholder="J1" min="0" max="7">
+                        <span style="font-size:1.5rem;">x</span>
+                        <input type="number" id="set2-p2" class="score-input" placeholder="J2" min="0" max="7">
+                    </div>
+                </div>
+                <div style="text-align: center;">
+                    <div>3º SET</div>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="number" id="set3-p1" class="score-input" placeholder="J1" min="0" max="7">
+                        <span style="font-size:1.5rem;">x</span>
+                        <input type="number" id="set3-p2" class="score-input" placeholder="J2" min="0" max="7">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="winner-badge" id="winner-calc">
+                🏆 Vencedor será calculado automaticamente
+            </div>
+            
+            <button class="btn-orange" id="save-score-match" style="margin-top: 20px;">
+                <i class="fas fa-save"></i> SALVAR PARTIDA COM PLACAR
+            </button>
+        </div>
+        
+        <!-- Histórico de partidas recentes -->
         <div class="card">
-            <div class="card-header"><i class="fas fa-clipboard-list"></i> Registrar Partida</div>
-            <select id="match-type">
-                <option value="simples">Simples</option>
-                <option value="duplas">Duplas</option>
-            </select>
-            <select id="player1"></select>
-            <select id="player2"></select>
-            <div id="duplas-fields" class="hidden">
-                <select id="player3"></select>
-                <select id="player4"></select>
-            </div>
-            <select id="winner-select"></select>
-            
-            <!-- Campo para resultado da partida -->
-            <div class="result-input">
-                <input type="text" id="set1" placeholder="1º set (ex: 6/4)">
-                <input type="text" id="set2" placeholder="2º set (ex: 7/5)">
-                <input type="text" id="set3" placeholder="3º set (opcional)">
-            </div>
-            
-            <button class="btn-orange" id="save-match">Salvar Partida</button>
+            <div class="card-header"><i class="fas fa-history"></i> Últimas Partidas</div>
+            <div id="recent-matches"></div>
         </div>
     </div>
 
@@ -434,16 +522,16 @@
 
     <div id="admin-tab" class="hidden">
         <div class="card">
-            <div class="card-header"><i class="fas fa-user-plus"></i> Adicionar Jogador + Foto</div>
-            <input type="text" id="new-player-name" placeholder="Nome completo">
+            <div class="card-header"><i class="fas fa-user-plus"></i> Adicionar Jogador</div>
+            <input type="text" id="new-player-name" placeholder="Nome completo do jogador">
             <input type="file" id="player-photo" accept="image/*">
-            <div id="photo-preview"></div>
-            <button class="btn-orange" id="add-player">Adicionar Jogador</button>
+            <div id="photo-preview" style="margin-bottom: 12px;"></div>
+            <button class="btn-orange" id="add-player-btn"><i class="fas fa-plus"></i> Adicionar Jogador</button>
         </div>
         <div class="card">
             <div class="card-header"><i class="fas fa-user-minus"></i> Remover Jogador</div>
             <select id="delete-player-select"></select>
-            <button class="btn-orange btn-outline" id="delete-player">Remover</button>
+            <button class="btn-outline" id="delete-player-btn">Remover Jogador</button>
         </div>
         <div class="card">
             <div class="card-header"><i class="fas fa-list"></i> Membros do Clube</div>
@@ -453,7 +541,7 @@
 
     <div class="bottom-menu">
         <button class="menu-btn active" data-tab="home"><i class="fas fa-home"></i><span>Início</span></button>
-        <button class="menu-btn" data-tab="registro"><i class="fas fa-plus-circle"></i><span>Registrar</span></button>
+        <button class="menu-btn" data-tab="placar"><i class="fas fa-chalkboard"></i><span>Marcar Placar</span></button>
         <button class="menu-btn" data-tab="rankings"><i class="fas fa-trophy"></i><span>Ranking</span></button>
         <button class="menu-btn" data-tab="admin"><i class="fas fa-crown"></i><span>Admin</span></button>
     </div>
