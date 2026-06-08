@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+    
     <style>
         * {
             margin: 0;
@@ -23,7 +23,6 @@
             position: relative;
         }
 
-        /* Overlay suave para dar profundidade */
         body::before {
             content: "";
             position: fixed;
@@ -43,7 +42,6 @@
             z-index: 2;
         }
 
-        /* Header */
         .header {
             background: rgba(0, 0, 0, 0.7);
             backdrop-filter: blur(10px);
@@ -69,7 +67,6 @@
             margin-top: 5px;
         }
 
-        /* Card Next Match */
         .next-card {
             background: rgba(0, 0, 0, 0.7);
             backdrop-filter: blur(10px);
@@ -137,7 +134,6 @@
             border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        /* Cards comuns */
         .card {
             background: rgba(255, 255, 255, 0.95);
             border-radius: 16px;
@@ -203,8 +199,8 @@
         }
 
         .player-photo {
-            width: 36px;
-            height: 36px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             object-fit: cover;
             margin-right: 10px;
@@ -301,6 +297,15 @@
             align-items: center;
             gap: 10px;
         }
+
+        .url-hint {
+            font-size: 0.7rem;
+            color: #8B5A2B;
+            margin-bottom: 10px;
+            background: #FFF0E0;
+            padding: 6px;
+            border-radius: 8px;
+        }
     </style>
 </head>
 <body>
@@ -311,7 +316,6 @@
         <p>SENDO RUIM EM MAIS UM ESPORTE</p>
     </div>
 
-    <!-- PRÓXIMO DUELO -->
     <div class="next-card">
         <div class="next-title">PRÓXIMO DUELO</div>
         <div id="nextPlayers" class="next-players">
@@ -323,7 +327,6 @@
         <div id="matchStatus" style="font-size:0.7rem; color:#AAA; margin-top:8px;"></div>
     </div>
 
-    <!-- HOME -->
     <div id="homeTab">
         <div class="card">
             <div class="card-title"><i class="fas fa-skull"></i> PERDEDOR DA RODADA</div>
@@ -341,7 +344,6 @@
         </div>
     </div>
 
-    <!-- PLACAR -->
     <div id="placarTab" class="hidden">
         <div class="card">
             <div class="card-title">REGISTRAR PARTIDA</div>
@@ -381,18 +383,19 @@
         </div>
     </div>
 
-    <!-- RANKING -->
     <div id="rankingTab" class="hidden">
         <div class="card"><div class="card-title">🏆 RANKING SIMPLES</div><div id="rankSimples"></div></div>
         <div class="card"><div class="card-title">👥 RANKING DUPLAS</div><div id="rankDuplas"></div></div>
     </div>
 
-    <!-- ADMIN -->
     <div id="adminTab" class="hidden">
         <div class="card">
             <div class="card-title">ADICIONAR JOGADOR</div>
             <input type="text" id="playerName" placeholder="Nome completo">
-            <input type="file" id="playerPhoto" accept="image/*">
+            <input type="text" id="playerPhotoUrl" placeholder="URL da foto (ex: https://github.com/seu-usuario/foto.jpg)">
+            <div class="url-hint">
+                <i class="fas fa-info-circle"></i> Dica: Hospede a foto no GitHub, copie a URL raw e cole aqui
+            </div>
             <div id="photoPreview"></div>
             <button id="addPlayerBtn">ADICIONAR JOGADOR</button>
         </div>
@@ -429,7 +432,6 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
-const storage = firebase.storage();
 
 let players = [], matches = [], checkins = [], losers = [];
 
@@ -457,7 +459,7 @@ async function loadPlayers() {
     document.getElementById('membersList').innerHTML = players.map(p => `
         <div class="player-item">
             <div class="flex-row">
-                <img src="${p.photoUrl || 'https://via.placeholder.com/36'}" class="player-photo" onerror="this.src='https://via.placeholder.com/36'">
+                <img src="${p.photoUrl || 'https://via.placeholder.com/40'}" class="player-photo" onerror="this.src='https://via.placeholder.com/40'">
                 <span><strong>${p.name}</strong></span>
             </div>
         </div>
@@ -567,52 +569,65 @@ async function loadLosers() {
     }).join('') || '<div style="text-align:center">Nenhum</div>';
 }
 
-// ADICIONAR JOGADOR COM FOTO
+// ADICIONAR JOGADOR COM URL DA FOTO
 async function addPlayer() {
     let name = document.getElementById('playerName').value.trim();
-    let file = document.getElementById('playerPhoto').files[0];
-    if(!name) { toast('Digite o nome'); return; }
-    toast('Adicionando...');
+    let photoUrl = document.getElementById('playerPhotoUrl').value.trim();
+    
+    if(!name) { toast('Digite o nome do jogador'); return; }
+    
+    toast('Adicionando jogador...');
 
     try {
-        let photoUrl = null;
-        if(file) {
-            let ref = storage.ref(`players/${Date.now()}_${file.name}`);
-            await ref.put(file);
-            photoUrl = await ref.getDownloadURL();
-        }
-        await db.ref('players').push({ name, photoUrl });
-        toast(`✅ ${name} adicionado!`);
+        await db.ref('players').push({ 
+            name: name, 
+            photoUrl: photoUrl || null,
+            createdAt: new Date().toISOString()
+        });
+        
+        toast(`✅ Jogador ${name} adicionado!`);
         document.getElementById('playerName').value = '';
-        document.getElementById('playerPhoto').value = '';
+        document.getElementById('playerPhotoUrl').value = '';
         document.getElementById('photoPreview').innerHTML = '';
         loadPlayers();
-    } catch(e) { toast('Erro: ' + e.message); }
+    } catch(e) { 
+        toast('Erro: ' + e.message); 
+    }
 }
+
+// PREVIEW DA FOTO POR URL
+document.getElementById('playerPhotoUrl').addEventListener('input', (e) => {
+    let url = e.target.value;
+    if(url) {
+        document.getElementById('photoPreview').innerHTML = `<img src="${url}" class="photo-preview" onerror="this.src='https://via.placeholder.com/50'">`;
+    } else {
+        document.getElementById('photoPreview').innerHTML = '';
+    }
+});
 
 async function removePlayer() {
     let id = document.getElementById('removeSelect').value;
-    if(!id) { toast('Selecione'); return; }
+    if(!id) { toast('Selecione um jogador'); return; }
     await db.ref(`players/${id}`).remove();
-    toast('Removido');
+    toast('✅ Jogador removido');
     loadPlayers();
 }
 
 async function addLoser() {
     let id = document.getElementById('loserSelect').value;
-    if(!id) { toast('Selecione'); return; }
+    if(!id) { toast('Selecione o perdedor'); return; }
     await db.ref('losers').push({ playerId: id, timestamp: Date.now() });
-    toast('💀 Hostilizado');
+    toast('💀 Perdedor hostilizado!');
     loadLosers();
 }
 
 async function doCheckin() {
     let id = document.getElementById('checkinSelect').value;
     let date = document.getElementById('checkinDate').value;
-    if(!id) { toast('Selecione'); return; }
-    if(!date) { toast('Data'); return; }
+    if(!id) { toast('Selecione um jogador'); return; }
+    if(!date) { toast('Selecione a data do duelo'); return; }
     await db.ref('checkins').push({ playerId: id, date, timestamp: Date.now() });
-    toast('✅ Check-in');
+    toast('✅ Check-in confirmado!');
     loadCheckins();
 }
 
@@ -623,69 +638,75 @@ async function saveMatch() {
     if(type === 'simples') {
         let p1 = document.getElementById('player1').value;
         let p2 = document.getElementById('player2').value;
-        if(!p1 || !p2) { toast('Selecione'); return; }
+        if(!p1 || !p2) { toast('Selecione os jogadores'); return; }
+        if(p1 === p2) { toast('Jogadores diferentes'); return; }
+        
         let s1a = +document.getElementById('set1a').value || 0;
         let s1b = +document.getElementById('set1b').value || 0;
         let s2a = +document.getElementById('set2a').value || 0;
         let s2b = +document.getElementById('set2b').value || 0;
         let s3a = +document.getElementById('set3a').value || 0;
         let s3b = +document.getElementById('set3b').value || 0;
+        
         let sp1=0, sp2=0;
         if(s1a>s1b) sp1++; else if(s1b>s1a) sp2++;
         if(s2a>s2b) sp1++; else if(s2b>s2a) sp2++;
         if(s3a>s3b) sp1++; else if(s3b>s3a) sp2++;
+        
         if(sp1>sp2) { winners=[p1]; losers=[p2]; }
         else if(sp2>sp1) { winners=[p2]; losers=[p1]; }
-        else { toast('Empate'); return; }
+        else { toast('Empate!'); return; }
     } else {
         let a1 = document.getElementById('dupla1').value;
         let a2 = document.getElementById('dupla2').value;
         let b1 = document.getElementById('dupla3').value;
         let b2 = document.getElementById('dupla4').value;
-        if(!a1||!a2||!b1||!b2) { toast('Selecione todos'); return; }
+        if(!a1||!a2||!b1||!b2) { toast('Selecione todos os 4 jogadores'); return; }
+        
         let s1a = +document.getElementById('set1a').value || 0;
         let s1b = +document.getElementById('set1b').value || 0;
         let s2a = +document.getElementById('set2a').value || 0;
         let s2b = +document.getElementById('set2b').value || 0;
         let s3a = +document.getElementById('set3a').value || 0;
         let s3b = +document.getElementById('set3b').value || 0;
+        
         let sa=0, sb=0;
         if(s1a>s1b) sa++; else if(s1b>s1a) sb++;
         if(s2a>s2b) sa++; else if(s2b>s2a) sb++;
         if(s3a>s3b) sa++; else if(s3b>s3a) sb++;
+        
         if(sa>sb) { winners=[a1,a2]; losers=[b1,b2]; }
         else if(sb>sa) { winners=[b1,b2]; losers=[a1,a2]; }
-        else { toast('Empate'); return; }
+        else { toast('Empate!'); return; }
     }
 
-    await db.ref('matches').push({ type, winners, losers, date: new Date().toISOString(), timestamp: Date.now() });
-    toast('🎾 Partida registrada');
+    await db.ref('matches').push({ 
+        type, winners, losers, 
+        date: new Date().toISOString(), 
+        timestamp: Date.now() 
+    });
+    
+    toast('🎾 Partida registrada!');
+    
     document.getElementById('set1a').value = '';
     document.getElementById('set1b').value = '';
     document.getElementById('set2a').value = '';
     document.getElementById('set2b').value = '';
     document.getElementById('set3a').value = '';
     document.getElementById('set3b').value = '';
+    
     loadMatches();
 }
 
 async function deleteMatch() {
     let id = document.getElementById('deleteSelect').value;
-    if(!id) { toast('Selecione'); return; }
+    if(!id) { toast('Selecione uma partida'); return; }
     await db.ref(`matches/${id}`).remove();
-    toast('Excluída');
+    toast('✅ Partida excluída');
     loadMatches();
 }
 
 // EVENTOS
-document.getElementById('playerPhoto').addEventListener('change', (e) => {
-    if(e.target.files[0]) {
-        let r = new FileReader();
-        r.onload = (ev) => document.getElementById('photoPreview').innerHTML = `<img src="${ev.target.result}" class="photo-preview">`;
-        r.readAsDataURL(e.target.files[0]);
-    }
-});
-
 document.getElementById('addPlayerBtn').onclick = addPlayer;
 document.getElementById('removePlayerBtn').onclick = removePlayer;
 document.getElementById('addLoserBtn').onclick = addLoser;
