@@ -10,19 +10,15 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         body {
             font-family: 'Inter', sans-serif;
             min-height: 100vh;
             background: linear-gradient(145deg, #1a472a 0%, #8B5A2B 100%);
             position: relative;
         }
-
+        
         body::before {
             content: "";
             position: fixed;
@@ -33,7 +29,7 @@
             background: rgba(0, 0, 0, 0.4);
             z-index: 0;
         }
-
+        
         .container {
             max-width: 550px;
             margin: 0 auto;
@@ -41,7 +37,7 @@
             position: relative;
             z-index: 2;
         }
-
+        
         .header {
             background: rgba(0, 0, 0, 0.7);
             backdrop-filter: blur(10px);
@@ -51,7 +47,7 @@
             text-align: center;
             border: 1px solid rgba(245, 166, 35, 0.5);
         }
-
+        
         .header h1 {
             font-size: 1.6rem;
             font-weight: 700;
@@ -60,13 +56,13 @@
             background-clip: text;
             color: transparent;
         }
-
+        
         .header p {
             font-size: 0.7rem;
             color: rgba(255, 255, 255, 0.7);
             margin-top: 5px;
         }
-
+        
         .next-card {
             background: rgba(0, 0, 0, 0.7);
             backdrop-filter: blur(10px);
@@ -76,7 +72,7 @@
             border: 1px solid rgba(245, 166, 35, 0.5);
             text-align: center;
         }
-
+        
         .next-title {
             font-size: 0.8rem;
             font-weight: 600;
@@ -84,7 +80,7 @@
             margin-bottom: 15px;
             letter-spacing: 1px;
         }
-
+        
         .next-players {
             display: flex;
             justify-content: center;
@@ -92,7 +88,7 @@
             gap: 20px;
             margin-bottom: 15px;
         }
-
+        
         .next-player {
             text-align: center;
             background: rgba(255, 255, 255, 0.08);
@@ -100,7 +96,7 @@
             border-radius: 16px;
             min-width: 100px;
         }
-
+        
         .next-player-img {
             width: 55px;
             height: 55px;
@@ -113,19 +109,19 @@
             border: 2px solid #F5A623;
             object-fit: cover;
         }
-
+        
         .next-player-name {
             color: white;
             font-size: 0.8rem;
             font-weight: 500;
         }
-
+        
         .vs {
             font-weight: 700;
             color: #F5A623;
             font-size: 1.2rem;
         }
-
+        
         .match-date {
             font-size: 0.7rem;
             color: #F5A623;
@@ -133,7 +129,7 @@
             padding-top: 8px;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
-
+        
         .card {
             background: rgba(255, 255, 255, 0.95);
             border-radius: 16px;
@@ -141,7 +137,7 @@
             margin-bottom: 16px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
-
+        
         .card-title {
             font-weight: 700;
             font-size: 0.85rem;
@@ -150,7 +146,7 @@
             border-left: 3px solid #F5A623;
             padding-left: 10px;
         }
-
+        
         input, select {
             width: 100%;
             padding: 10px 14px;
@@ -160,7 +156,7 @@
             margin-bottom: 10px;
             background: white;
         }
-
+        
         button {
             background: #F5A623;
             border: none;
@@ -172,22 +168,11 @@
             width: 100%;
             transition: all 0.2s;
         }
-
-        button:active {
-            transform: scale(0.97);
-            background: #E67E22;
-        }
-
-        .btn-outline {
-            background: transparent;
-            border: 1px solid #F5A623;
-            color: #F5A623;
-        }
-
-        .btn-danger {
-            background: #C0392B;
-        }
-
+        
+        button:active { transform: scale(0.97); background: #E67E22; }
+        .btn-outline { background: transparent; border: 1px solid #F5A623; color: #F5A623; }
+        .btn-danger { background: #C0392B; }
+        
         .player-item {
             display: flex;
             align-items: center;
@@ -197,7 +182,7 @@
             border-radius: 12px;
             margin-bottom: 8px;
         }
-
+        
         .player-photo {
             width: 40px;
             height: 40px;
@@ -205,7 +190,7 @@
             object-fit: cover;
             margin-right: 10px;
         }
-
+        
         .ranking-item {
             display: flex;
             justify-content: space-between;
@@ -213,19 +198,10 @@
             border-bottom: 1px solid #EEE;
             font-size: 0.85rem;
         }
-
-        .score-set {
-            text-align: center;
-            margin: 12px 0;
-        }
-
-        .score-input {
-            width: 55px;
-            text-align: center;
-            margin: 0 3px;
-            padding: 8px;
-        }
-
+        
+        .score-set { text-align: center; margin: 12px 0; }
+        .score-input { width: 55px; text-align: center; margin: 0 3px; padding: 8px; }
+        
         .bottom-menu {
             position: fixed;
             bottom: 0;
@@ -238,7 +214,7 @@
             padding: 10px;
             border-top: 1px solid #F5A623;
         }
-
+        
         .menu-btn {
             background: transparent;
             border: none;
@@ -247,21 +223,12 @@
             cursor: pointer;
             padding: 8px;
         }
-
-        .menu-btn.active {
-            color: #F5A623;
-        }
-
-        .menu-btn i {
-            font-size: 1.2rem;
-            display: block;
-            margin-bottom: 4px;
-        }
-
-        .hidden {
-            display: none;
-        }
-
+        
+        .menu-btn.active { color: #F5A623; }
+        .menu-btn i { font-size: 1.2rem; display: block; margin-bottom: 4px; }
+        
+        .hidden { display: none; }
+        
         .toast {
             position: fixed;
             bottom: 80px;
@@ -275,37 +242,15 @@
             z-index: 1000;
             animation: fadeOut 2s forwards;
         }
-
+        
         @keyframes fadeOut {
             0% { opacity: 1; }
             70% { opacity: 1; }
             100% { opacity: 0; visibility: hidden; }
         }
-
-        .photo-preview {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin: 8px auto;
-            display: block;
-            border: 2px solid #F5A623;
-        }
-
-        .flex-row {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .url-hint {
-            font-size: 0.7rem;
-            color: #8B5A2B;
-            margin-bottom: 10px;
-            background: #FFF0E0;
-            padding: 6px;
-            border-radius: 8px;
-        }
+        
+        .flex-row { display: flex; align-items: center; gap: 10px; }
+        .url-hint { font-size: 0.7rem; color: #8B5A2B; margin-bottom: 10px; background: #FFF0E0; padding: 6px; border-radius: 8px; }
     </style>
 </head>
 <body>
@@ -392,11 +337,10 @@
         <div class="card">
             <div class="card-title">ADICIONAR JOGADOR</div>
             <input type="text" id="playerName" placeholder="Nome completo">
-            <input type="text" id="playerPhotoUrl" placeholder="URL da foto (ex: https://github.com/seu-usuario/foto.jpg)">
+            <input type="text" id="playerPhotoUrl" placeholder="URL da foto (opcional)">
             <div class="url-hint">
-                <i class="fas fa-info-circle"></i> Dica: Hospede a foto no GitHub, copie a URL raw e cole aqui
+                <i class="fas fa-info-circle"></i> Dica: Cole a URL direta da imagem do jogador
             </div>
-            <div id="photoPreview"></div>
             <button id="addPlayerBtn">ADICIONAR JOGADOR</button>
         </div>
         <div class="card">
@@ -419,7 +363,7 @@
 </div>
 
 <script>
-// FIREBASE CONFIG
+// ==================== FIREBASE CONFIG ====================
 const firebaseConfig = {
     apiKey: "AIzaSyC1HCA84bAsQWsf1y0c85gXZ2_Jn6_syaU",
     authDomain: "quartetotenistico-9c9ab.firebaseapp.com",
@@ -430,311 +374,529 @@ const firebaseConfig = {
     appId: "1:791700433774:web:ea08cc0ad6c1cc045fef7f"
 };
 
+// Inicializar Firebase
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-let players = [], matches = [], checkins = [], losers = [];
+// ==================== VARIÁVEIS ====================
+let players = [];
+let matches = [];
+let checkins = [];
+let losers = [];
 
-function toast(msg) {
-    let t = document.createElement('div');
-    t.className = 'toast';
-    t.innerHTML = msg;
-    document.body.appendChild(t);
-    setTimeout(() => t.remove(), 2500);
+// ==================== FUNÇÕES ====================
+function showToast(msg) {
+    let toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.innerHTML = msg;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 2500);
 }
 
-// CARREGAR JOGADORES
+// CARREGAR JOGADORES DO FIREBASE
 async function loadPlayers() {
-    const snap = await db.ref('players').once('value');
-    players = [];
-    snap.forEach(c => players.push({ id: c.key, ...c.val() }));
-    players.sort((a,b) => (a.name || '').localeCompare(b.name || ''));
-
-    const selects = ['player1','player2','dupla1','dupla2','dupla3','dupla4','checkinSelect','loserSelect','removeSelect','deleteSelect'];
-    selects.forEach(id => {
-        let el = document.getElementById(id);
-        if(el) el.innerHTML = '<option value="">Selecione</option>' + players.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
-    });
-
-    document.getElementById('membersList').innerHTML = players.map(p => `
-        <div class="player-item">
-            <div class="flex-row">
-                <img src="${p.photoUrl || 'https://via.placeholder.com/40'}" class="player-photo" onerror="this.src='https://via.placeholder.com/40'">
-                <span><strong>${p.name}</strong></span>
-            </div>
-        </div>
-    `).join('') || '<div style="text-align:center; padding:20px;">Nenhum jogador</div>';
-}
-
-// CARREGAR PARTIDAS E RANKINGS
-async function loadMatches() {
-    const snap = await db.ref('matches').once('value');
-    matches = [];
-    snap.forEach(c => matches.push({ id: c.key, ...c.val() }));
-    matches.sort((a,b) => (b.timestamp || 0) - (a.timestamp || 0));
-
-    const stats = {};
-    players.forEach(p => stats[p.id] = { j: 0, v: 0 });
-    matches.forEach(m => {
-        if(m.winners) m.winners.forEach(w => { if(stats[w]) { stats[w].j++; stats[w].v++; } });
-        if(m.losers) m.losers.forEach(l => { if(stats[l]) stats[l].j++; });
-    });
-
-    const sorted = Object.entries(stats).sort((a,b) => b[1].v - a[1].v);
-    document.getElementById('rankSimples').innerHTML = sorted.map(([id,s]) => {
-        let p = players.find(p => p.id === id);
-        let perc = s.j > 0 ? ((s.v/s.j)*100).toFixed(0) : 0;
-        return `<div class="ranking-item"><span><strong>${p?.name || '?'}</strong></span><span>🏆 ${s.v}V / ${s.j-s.v}D (${perc}%)</span></div>`;
-    }).join('') || '<div style="text-align:center">Nenhuma partida</div>';
-
-    const dw = {};
-    matches.forEach(m => {
-        if(m.type === 'duplas' && m.winners?.length === 2) {
-            let k = [m.winners[0], m.winners[1]].sort().join('_');
-            dw[k] = (dw[k] || 0) + 1;
+    try {
+        const snapshot = await db.ref('players').once('value');
+        players = [];
+        snapshot.forEach(child => {
+            players.push({ 
+                id: child.key, 
+                name: child.val().name || 'Sem nome',
+                photoUrl: child.val().photoUrl || null
+            });
+        });
+        players.sort((a, b) => a.name.localeCompare(b.name));
+        
+        console.log('Jogadores carregados:', players.length);
+        
+        // Atualizar todos os selects
+        const selects = ['player1', 'player2', 'dupla1', 'dupla2', 'dupla3', 'dupla4', 
+                         'checkinSelect', 'loserSelect', 'removeSelect', 'deleteSelect'];
+        selects.forEach(id => {
+            const el = document.getElementById(id);
+            if(el) {
+                el.innerHTML = '<option value="">Selecione</option>' + 
+                    players.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+            }
+        });
+        
+        // Atualizar lista de membros
+        const membersDiv = document.getElementById('membersList');
+        if(players.length === 0) {
+            membersDiv.innerHTML = '<div style="text-align:center; padding:20px;">Nenhum jogador cadastrado</div>';
+        } else {
+            membersDiv.innerHTML = players.map(p => `
+                <div class="player-item">
+                    <div class="flex-row">
+                        <img src="${p.photoUrl || 'https://via.placeholder.com/40'}" class="player-photo" onerror="this.src='https://via.placeholder.com/40'">
+                        <span><strong>${p.name}</strong></span>
+                    </div>
+                    <small style="color:#999;">${p.id.substring(0,6)}</small>
+                </div>
+            `).join('');
         }
-    });
-    document.getElementById('rankDuplas').innerHTML = Object.entries(dw).sort((a,b) => b[1]-a[1]).map(([k,w]) => {
-        let ids = k.split('_');
-        let p1 = players.find(p => p.id === ids[0]);
-        let p2 = players.find(p => p.id === ids[1]);
-        return `<div class="ranking-item"><span>${p1?.name || '?'} / ${p2?.name || '?'}</span><span>🏆 ${w}</span></div>`;
-    }).join('') || '<div style="text-align:center">Nenhuma dupla</div>';
-
-    document.getElementById('recentMatches').innerHTML = matches.slice(0,10).map(m => {
-        let winners = m.winners?.map(w => players.find(p => p.id === w)?.name).join('/') || '?';
-        let losers = m.losers?.map(l => players.find(p => p.id === l)?.name).join('/') || '?';
-        return `<div class="player-item"><span><strong>${winners}</strong> venceu <strong>${losers}</strong></span></div>`;
-    }).join('') || '<div style="text-align:center">Nenhuma</div>';
-
-    document.getElementById('deleteSelect').innerHTML = '<option value="">Selecione</option>' + matches.slice(0,20).map(m => {
-        let winners = m.winners?.map(w => players.find(p => p.id === w)?.name).join('/');
-        let losers = m.losers?.map(l => players.find(p => p.id === l)?.name).join('/');
-        return `<option value="${m.id}">${winners} x ${losers}</option>`;
-    }).join('');
+        
+        return true;
+    } catch (error) {
+        console.error('Erro ao carregar jogadores:', error);
+        showToast('Erro ao carregar jogadores: ' + error.message);
+        return false;
+    }
 }
 
-// CARREGAR CHECKINS E PRÓXIMO DUELO
-async function loadCheckins() {
-    const snap = await db.ref('checkins').once('value');
-    checkins = [];
-    snap.forEach(c => checkins.push(c.val()));
-
-    const hoje = new Date().toDateString();
-    const hojeIds = checkins.filter(c => c.date && new Date(c.date).toDateString() === hoje).map(c => c.playerId);
-    const confirmados = players.filter(p => hojeIds.includes(p.id));
-
-    let container = document.getElementById('nextPlayers');
-    let dateDiv = document.getElementById('matchDate');
-    let statusDiv = document.getElementById('matchStatus');
-
-    if(checkins.length > 0 && checkins[0].date) dateDiv.innerHTML = `📅 ${new Date(checkins[0].date).toLocaleDateString('pt-BR')}`;
-    else dateDiv.innerHTML = '';
-
-    if(confirmados.length >= 2) {
-        container.innerHTML = `
-            <div class="next-player"><img src="${confirmados[0].photoUrl || 'https://via.placeholder.com/55'}" class="next-player-img" onerror="this.src='https://via.placeholder.com/55'"><div class="next-player-name">${confirmados[0].name}</div></div>
-            <span class="vs">VS</span>
-            <div class="next-player"><img src="${confirmados[1].photoUrl || 'https://via.placeholder.com/55'}" class="next-player-img" onerror="this.src='https://via.placeholder.com/55'"><div class="next-player-name">${confirmados[1].name}</div></div>
-        `;
-        statusDiv.innerHTML = `✅ ${confirmados.length} confirmados`;
-    } else {
-        container.innerHTML = `
-            <div class="next-player"><div class="next-player-img"><i class="fas fa-user" style="font-size:24px;"></i></div><div class="next-player-name">---</div></div>
-            <span class="vs">VS</span>
-            <div class="next-player"><div class="next-player-img"><i class="fas fa-user" style="font-size:24px;"></i></div><div class="next-player-name">---</div></div>
-        `;
-        statusDiv.innerHTML = `⏳ ${confirmados.length}/2 jogadores`;
+// CARREGAR PARTIDAS
+async function loadMatches() {
+    try {
+        const snapshot = await db.ref('matches').once('value');
+        matches = [];
+        snapshot.forEach(child => {
+            matches.push({ id: child.key, ...child.val() });
+        });
+        matches.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+        
+        // Ranking Simples
+        const stats = {};
+        players.forEach(p => stats[p.id] = { jogos: 0, vitorias: 0 });
+        matches.forEach(m => {
+            if(m.winners) {
+                m.winners.forEach(w => { 
+                    if(stats[w]) { stats[w].jogos++; stats[w].vitorias++; }
+                });
+            }
+            if(m.losers) {
+                m.losers.forEach(l => { 
+                    if(stats[l]) stats[l].jogos++; 
+                });
+            }
+        });
+        
+        const sorted = Object.entries(stats).sort((a, b) => b[1].vitorias - a[1].vitorias);
+        const rankSimplesDiv = document.getElementById('rankSimples');
+        if(sorted.length === 0) {
+            rankSimplesDiv.innerHTML = '<div style="text-align:center; padding:20px;">Nenhuma partida</div>';
+        } else {
+            rankSimplesDiv.innerHTML = sorted.map(([id, s]) => {
+                const p = players.find(p => p.id === id);
+                const perc = s.jogos > 0 ? ((s.vitorias / s.jogos) * 100).toFixed(0) : 0;
+                return `<div class="ranking-item">
+                            <span><strong>${p?.name || '?'}</strong></span>
+                            <span>🏆 ${s.vitorias}V / ${s.jogos - s.vitorias}D (${perc}%)</span>
+                        </div>`;
+            }).join('');
+        }
+        
+        // Ranking Duplas
+        const duplaWins = {};
+        matches.forEach(m => {
+            if(m.type === 'duplas' && m.winners && m.winners.length === 2) {
+                const key = [m.winners[0], m.winners[1]].sort().join('_');
+                duplaWins[key] = (duplaWins[key] || 0) + 1;
+            }
+        });
+        const rankDuplasDiv = document.getElementById('rankDuplas');
+        const sortedDuplas = Object.entries(duplaWins).sort((a, b) => b[1] - a[1]);
+        if(sortedDuplas.length === 0) {
+            rankDuplasDiv.innerHTML = '<div style="text-align:center; padding:20px;">Nenhuma dupla</div>';
+        } else {
+            rankDuplasDiv.innerHTML = sortedDuplas.map(([key, wins]) => {
+                const ids = key.split('_');
+                const p1 = players.find(p => p.id === ids[0]);
+                const p2 = players.find(p => p.id === ids[1]);
+                return `<div class="ranking-item">
+                            <span>${p1?.name || '?'} / ${p2?.name || '?'}</span>
+                            <span>🏆 ${wins} título(s)</span>
+                        </div>`;
+            }).join('');
+        }
+        
+        // Partidas recentes
+        const recentDiv = document.getElementById('recentMatches');
+        if(matches.length === 0) {
+            recentDiv.innerHTML = '<div style="text-align:center; padding:20px;">Nenhuma partida</div>';
+        } else {
+            recentDiv.innerHTML = matches.slice(0, 10).map(m => {
+                const winners = m.winners?.map(w => players.find(p => p.id === w)?.name).join('/') || '?';
+                const losers = m.losers?.map(l => players.find(p => p.id === l)?.name).join('/') || '?';
+                return `<div class="player-item"><span><strong>${winners}</strong> venceu <strong>${losers}</strong></span></div>`;
+            }).join('');
+        }
+        
+        // Select de exclusão
+        const deleteSelect = document.getElementById('deleteSelect');
+        deleteSelect.innerHTML = '<option value="">Selecione</option>' + 
+            matches.slice(0, 20).map(m => {
+                const winners = m.winners?.map(w => players.find(p => p.id === w)?.name).join('/');
+                const losers = m.losers?.map(l => players.find(p => p.id === l)?.name).join('/');
+                return `<option value="${m.id}">${winners} x ${losers}</option>`;
+            }).join('');
+        
+    } catch (error) {
+        console.error('Erro ao carregar partidas:', error);
     }
+}
 
-    document.getElementById('checkinList').innerHTML = checkins.slice(0,8).map(c => {
-        let p = players.find(p => p.id === c.playerId);
-        let data = c.date ? new Date(c.date).toLocaleDateString() : '?';
-        return `<div class="player-item">📅 ${data} - ${p?.name || '?'}</div>`;
-    }).join('') || '<div style="text-align:center">Nenhum</div>';
+// CARREGAR CHECKINS
+async function loadCheckins() {
+    try {
+        const snapshot = await db.ref('checkins').once('value');
+        checkins = [];
+        snapshot.forEach(child => {
+            checkins.push(child.val());
+        });
+        checkins.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+        
+        const hoje = new Date().toDateString();
+        const hojeIds = checkins.filter(c => c.date && new Date(c.date).toDateString() === hoje).map(c => c.playerId);
+        const confirmados = players.filter(p => hojeIds.includes(p.id));
+        
+        const container = document.getElementById('nextPlayers');
+        const dateDiv = document.getElementById('matchDate');
+        const statusDiv = document.getElementById('matchStatus');
+        
+        if(checkins.length > 0 && checkins[0].date) {
+            dateDiv.innerHTML = `📅 ${new Date(checkins[0].date).toLocaleDateString('pt-BR')}`;
+        } else {
+            dateDiv.innerHTML = '';
+        }
+        
+        if(confirmados.length >= 2) {
+            container.innerHTML = `
+                <div class="next-player">
+                    <img src="${confirmados[0].photoUrl || 'https://via.placeholder.com/55'}" class="next-player-img" onerror="this.src='https://via.placeholder.com/55'">
+                    <div class="next-player-name">${confirmados[0].name}</div>
+                </div>
+                <span class="vs">VS</span>
+                <div class="next-player">
+                    <img src="${confirmados[1].photoUrl || 'https://via.placeholder.com/55'}" class="next-player-img" onerror="this.src='https://via.placeholder.com/55'">
+                    <div class="next-player-name">${confirmados[1].name}</div>
+                </div>
+            `;
+            statusDiv.innerHTML = `✅ ${confirmados.length} jogadores confirmados`;
+        } else {
+            container.innerHTML = `
+                <div class="next-player"><div class="next-player-img"><i class="fas fa-user" style="font-size:24px;"></i></div><div class="next-player-name">---</div></div>
+                <span class="vs">VS</span>
+                <div class="next-player"><div class="next-player-img"><i class="fas fa-user" style="font-size:24px;"></i></div><div class="next-player-name">---</div></div>
+            `;
+            statusDiv.innerHTML = `⏳ Aguardando check-ins (${confirmados.length}/2)`;
+        }
+        
+        const checkinListDiv = document.getElementById('checkinList');
+        if(checkins.length === 0) {
+            checkinListDiv.innerHTML = '<div style="text-align:center;">Nenhum check-in</div>';
+        } else {
+            checkinListDiv.innerHTML = checkins.slice(0, 8).map(c => {
+                const p = players.find(p => p.id === c.playerId);
+                const data = c.date ? new Date(c.date).toLocaleDateString() : '?';
+                return `<div class="player-item">📅 ${data} - ${p?.name || '?'}</div>`;
+            }).join('');
+        }
+        
+    } catch (error) {
+        console.error('Erro ao carregar checkins:', error);
+    }
 }
 
 // CARREGAR PERDEDORES
 async function loadLosers() {
-    const snap = await db.ref('losers').once('value');
-    losers = [];
-    snap.forEach(c => losers.push({ id: c.key, ...c.val() }));
-
-    let count = {};
-    losers.forEach(l => count[l.playerId] = (count[l.playerId] || 0) + 1);
-    let sorted = Object.entries(count).sort((a,b) => b[1] - a[1]).slice(0,5);
-    document.getElementById('loserList').innerHTML = sorted.map(([id,c]) => {
-        let p = players.find(p => p.id === id);
-        return `<div class="player-item">💀 ${p?.name || '?'} - 🍂 ${c}x</div>`;
-    }).join('') || '<div style="text-align:center">Nenhum</div>';
+    try {
+        const snapshot = await db.ref('losers').once('value');
+        losers = [];
+        snapshot.forEach(child => {
+            losers.push({ id: child.key, ...child.val() });
+        });
+        
+        const count = {};
+        losers.forEach(l => {
+            count[l.playerId] = (count[l.playerId] || 0) + 1;
+        });
+        const sorted = Object.entries(count).sort((a, b) => b[1] - a[1]).slice(0, 5);
+        
+        const loserListDiv = document.getElementById('loserList');
+        if(sorted.length === 0) {
+            loserListDiv.innerHTML = '<div style="text-align:center;">Nenhum perdedor</div>';
+        } else {
+            loserListDiv.innerHTML = sorted.map(([id, c]) => {
+                const p = players.find(p => p.id === id);
+                return `<div class="player-item">💀 ${p?.name || '?'} - 🍂 ${c} vez(es)</div>`;
+            }).join('');
+        }
+    } catch (error) {
+        console.error('Erro ao carregar perdedores:', error);
+    }
 }
 
-// ADICIONAR JOGADOR COM URL DA FOTO
-async function addPlayer() {
-    let name = document.getElementById('playerName').value.trim();
-    let photoUrl = document.getElementById('playerPhotoUrl').value.trim();
-    
-    if(!name) { toast('Digite o nome do jogador'); return; }
-    
-    toast('Adicionando jogador...');
+// ==================== AÇÕES ====================
 
+// ADICIONAR JOGADOR
+async function addPlayer() {
+    const name = document.getElementById('playerName').value.trim();
+    const photoUrl = document.getElementById('playerPhotoUrl').value.trim();
+    
+    if(!name) {
+        showToast('Digite o nome do jogador');
+        return;
+    }
+    
+    showToast('Adicionando jogador...');
+    
     try {
-        await db.ref('players').push({ 
-            name: name, 
+        const newRef = db.ref('players').push();
+        await newRef.set({
+            name: name,
             photoUrl: photoUrl || null,
             createdAt: new Date().toISOString()
         });
         
-        toast(`✅ Jogador ${name} adicionado!`);
+        showToast(`✅ Jogador ${name} adicionado com sucesso!`);
+        
+        // Limpar campos
         document.getElementById('playerName').value = '';
         document.getElementById('playerPhotoUrl').value = '';
-        document.getElementById('photoPreview').innerHTML = '';
-        loadPlayers();
-    } catch(e) { 
-        toast('Erro: ' + e.message); 
+        
+        // Recarregar lista
+        await loadPlayers();
+        await loadMatches();
+        await loadCheckins();
+        await loadLosers();
+        
+    } catch (error) {
+        console.error('Erro ao adicionar:', error);
+        showToast('Erro: ' + error.message);
     }
 }
 
-// PREVIEW DA FOTO POR URL
-document.getElementById('playerPhotoUrl').addEventListener('input', (e) => {
-    let url = e.target.value;
-    if(url) {
-        document.getElementById('photoPreview').innerHTML = `<img src="${url}" class="photo-preview" onerror="this.src='https://via.placeholder.com/50'">`;
-    } else {
-        document.getElementById('photoPreview').innerHTML = '';
-    }
-});
-
+// REMOVER JOGADOR
 async function removePlayer() {
-    let id = document.getElementById('removeSelect').value;
-    if(!id) { toast('Selecione um jogador'); return; }
-    await db.ref(`players/${id}`).remove();
-    toast('✅ Jogador removido');
-    loadPlayers();
-}
-
-async function addLoser() {
-    let id = document.getElementById('loserSelect').value;
-    if(!id) { toast('Selecione o perdedor'); return; }
-    await db.ref('losers').push({ playerId: id, timestamp: Date.now() });
-    toast('💀 Perdedor hostilizado!');
-    loadLosers();
-}
-
-async function doCheckin() {
-    let id = document.getElementById('checkinSelect').value;
-    let date = document.getElementById('checkinDate').value;
-    if(!id) { toast('Selecione um jogador'); return; }
-    if(!date) { toast('Selecione a data do duelo'); return; }
-    await db.ref('checkins').push({ playerId: id, date, timestamp: Date.now() });
-    toast('✅ Check-in confirmado!');
-    loadCheckins();
-}
-
-async function saveMatch() {
-    let type = document.getElementById('matchType').value;
-    let winners = [], losers = [];
-
-    if(type === 'simples') {
-        let p1 = document.getElementById('player1').value;
-        let p2 = document.getElementById('player2').value;
-        if(!p1 || !p2) { toast('Selecione os jogadores'); return; }
-        if(p1 === p2) { toast('Jogadores diferentes'); return; }
-        
-        let s1a = +document.getElementById('set1a').value || 0;
-        let s1b = +document.getElementById('set1b').value || 0;
-        let s2a = +document.getElementById('set2a').value || 0;
-        let s2b = +document.getElementById('set2b').value || 0;
-        let s3a = +document.getElementById('set3a').value || 0;
-        let s3b = +document.getElementById('set3b').value || 0;
-        
-        let sp1=0, sp2=0;
-        if(s1a>s1b) sp1++; else if(s1b>s1a) sp2++;
-        if(s2a>s2b) sp1++; else if(s2b>s2a) sp2++;
-        if(s3a>s3b) sp1++; else if(s3b>s3a) sp2++;
-        
-        if(sp1>sp2) { winners=[p1]; losers=[p2]; }
-        else if(sp2>sp1) { winners=[p2]; losers=[p1]; }
-        else { toast('Empate!'); return; }
-    } else {
-        let a1 = document.getElementById('dupla1').value;
-        let a2 = document.getElementById('dupla2').value;
-        let b1 = document.getElementById('dupla3').value;
-        let b2 = document.getElementById('dupla4').value;
-        if(!a1||!a2||!b1||!b2) { toast('Selecione todos os 4 jogadores'); return; }
-        
-        let s1a = +document.getElementById('set1a').value || 0;
-        let s1b = +document.getElementById('set1b').value || 0;
-        let s2a = +document.getElementById('set2a').value || 0;
-        let s2b = +document.getElementById('set2b').value || 0;
-        let s3a = +document.getElementById('set3a').value || 0;
-        let s3b = +document.getElementById('set3b').value || 0;
-        
-        let sa=0, sb=0;
-        if(s1a>s1b) sa++; else if(s1b>s1a) sb++;
-        if(s2a>s2b) sa++; else if(s2b>s2a) sb++;
-        if(s3a>s3b) sa++; else if(s3b>s3a) sb++;
-        
-        if(sa>sb) { winners=[a1,a2]; losers=[b1,b2]; }
-        else if(sb>sa) { winners=[b1,b2]; losers=[a1,a2]; }
-        else { toast('Empate!'); return; }
+    const id = document.getElementById('removeSelect').value;
+    if(!id) {
+        showToast('Selecione um jogador');
+        return;
     }
-
-    await db.ref('matches').push({ 
-        type, winners, losers, 
-        date: new Date().toISOString(), 
-        timestamp: Date.now() 
-    });
     
-    toast('🎾 Partida registrada!');
-    
-    document.getElementById('set1a').value = '';
-    document.getElementById('set1b').value = '';
-    document.getElementById('set2a').value = '';
-    document.getElementById('set2b').value = '';
-    document.getElementById('set3a').value = '';
-    document.getElementById('set3b').value = '';
-    
-    loadMatches();
+    try {
+        await db.ref(`players/${id}`).remove();
+        showToast('✅ Jogador removido');
+        await loadPlayers();
+        await loadMatches();
+        await loadCheckins();
+        await loadLosers();
+    } catch (error) {
+        showToast('Erro: ' + error.message);
+    }
 }
 
+// HOSTILIZAR PERDEDOR
+async function addLoser() {
+    const id = document.getElementById('loserSelect').value;
+    if(!id) {
+        showToast('Selecione o perdedor');
+        return;
+    }
+    
+    try {
+        await db.ref('losers').push({
+            playerId: id,
+            timestamp: Date.now()
+        });
+        showToast('💀 Perdedor hostilizado!');
+        await loadLosers();
+    } catch (error) {
+        showToast('Erro: ' + error.message);
+    }
+}
+
+// CHECK-IN
+async function doCheckin() {
+    const id = document.getElementById('checkinSelect').value;
+    const date = document.getElementById('checkinDate').value;
+    
+    if(!id) {
+        showToast('Selecione um jogador');
+        return;
+    }
+    if(!date) {
+        showToast('Selecione a data do duelo');
+        return;
+    }
+    
+    try {
+        await db.ref('checkins').push({
+            playerId: id,
+            date: date,
+            timestamp: Date.now()
+        });
+        showToast(`✅ Check-in confirmado para ${new Date(date).toLocaleDateString()}`);
+        await loadCheckins();
+    } catch (error) {
+        showToast('Erro: ' + error.message);
+    }
+}
+
+// SALVAR PARTIDA
+async function saveMatch() {
+    const type = document.getElementById('matchType').value;
+    let winners = [], losers = [];
+    
+    if(type === 'simples') {
+        const p1 = document.getElementById('player1').value;
+        const p2 = document.getElementById('player2').value;
+        
+        if(!p1 || !p2) {
+            showToast('Selecione os dois jogadores');
+            return;
+        }
+        if(p1 === p2) {
+            showToast('Selecione jogadores diferentes');
+            return;
+        }
+        
+        const s1a = parseInt(document.getElementById('set1a').value) || 0;
+        const s1b = parseInt(document.getElementById('set1b').value) || 0;
+        const s2a = parseInt(document.getElementById('set2a').value) || 0;
+        const s2b = parseInt(document.getElementById('set2b').value) || 0;
+        const s3a = parseInt(document.getElementById('set3a').value) || 0;
+        const s3b = parseInt(document.getElementById('set3b').value) || 0;
+        
+        let setsP1 = 0, setsP2 = 0;
+        if(s1a > s1b) setsP1++;
+        else if(s1b > s1a) setsP2++;
+        if(s2a > s2b) setsP1++;
+        else if(s2b > s2a) setsP2++;
+        if(s3a > s3b) setsP1++;
+        else if(s3b > s3a) setsP2++;
+        
+        if(setsP1 > setsP2) {
+            winners = [p1];
+            losers = [p2];
+        } else if(setsP2 > setsP1) {
+            winners = [p2];
+            losers = [p1];
+        } else {
+            showToast('Empate! Verifique os placares');
+            return;
+        }
+    } else {
+        const a1 = document.getElementById('dupla1').value;
+        const a2 = document.getElementById('dupla2').value;
+        const b1 = document.getElementById('dupla3').value;
+        const b2 = document.getElementById('dupla4').value;
+        
+        if(!a1 || !a2 || !b1 || !b2) {
+            showToast('Selecione todos os 4 jogadores');
+            return;
+        }
+        
+        const s1a = parseInt(document.getElementById('set1a').value) || 0;
+        const s1b = parseInt(document.getElementById('set1b').value) || 0;
+        const s2a = parseInt(document.getElementById('set2a').value) || 0;
+        const s2b = parseInt(document.getElementById('set2b').value) || 0;
+        const s3a = parseInt(document.getElementById('set3a').value) || 0;
+        const s3b = parseInt(document.getElementById('set3b').value) || 0;
+        
+        let setsA = 0, setsB = 0;
+        if(s1a > s1b) setsA++;
+        else if(s1b > s1a) setsB++;
+        if(s2a > s2b) setsA++;
+        else if(s2b > s2a) setsB++;
+        if(s3a > s3b) setsA++;
+        else if(s3b > s3a) setsB++;
+        
+        if(setsA > setsB) {
+            winners = [a1, a2];
+            losers = [b1, b2];
+        } else if(setsB > setsA) {
+            winners = [b1, b2];
+            losers = [a1, a2];
+        } else {
+            showToast('Empate! Verifique os placares');
+            return;
+        }
+    }
+    
+    try {
+        await db.ref('matches').push({
+            type: type,
+            winners: winners,
+            losers: losers,
+            date: new Date().toISOString(),
+            timestamp: Date.now()
+        });
+        
+        showToast('🎾 Partida registrada com sucesso!');
+        
+        // Limpar campos
+        document.getElementById('set1a').value = '';
+        document.getElementById('set1b').value = '';
+        document.getElementById('set2a').value = '';
+        document.getElementById('set2b').value = '';
+        document.getElementById('set3a').value = '';
+        document.getElementById('set3b').value = '';
+        
+        await loadMatches();
+    } catch (error) {
+        showToast('Erro: ' + error.message);
+    }
+}
+
+// EXCLUIR PARTIDA
 async function deleteMatch() {
-    let id = document.getElementById('deleteSelect').value;
-    if(!id) { toast('Selecione uma partida'); return; }
-    await db.ref(`matches/${id}`).remove();
-    toast('✅ Partida excluída');
-    loadMatches();
+    const id = document.getElementById('deleteSelect').value;
+    if(!id) {
+        showToast('Selecione uma partida');
+        return;
+    }
+    
+    try {
+        await db.ref(`matches/${id}`).remove();
+        showToast('✅ Partida excluída');
+        await loadMatches();
+    } catch (error) {
+        showToast('Erro: ' + error.message);
+    }
 }
 
-// EVENTOS
+// ==================== CONFIGURAÇÃO ====================
+document.getElementById('checkinDate').valueAsDate = new Date();
+
+// Eventos dos botões
 document.getElementById('addPlayerBtn').onclick = addPlayer;
 document.getElementById('removePlayerBtn').onclick = removePlayer;
 document.getElementById('addLoserBtn').onclick = addLoser;
 document.getElementById('checkinBtn').onclick = doCheckin;
 document.getElementById('saveMatchBtn').onclick = saveMatch;
 document.getElementById('deleteMatchBtn').onclick = deleteMatch;
-document.getElementById('matchType').onchange = () => {
-    let d = document.getElementById('matchType').value === 'duplas';
-    document.getElementById('simplesArea').classList.toggle('hidden', d);
-    document.getElementById('duplasArea').classList.toggle('hidden', !d);
-};
-document.getElementById('checkinDate').valueAsDate = new Date();
 
-// TABS
+// Toggle duplas
+document.getElementById('matchType').onchange = () => {
+    const isDuplas = document.getElementById('matchType').value === 'duplas';
+    document.getElementById('simplesArea').classList.toggle('hidden', isDuplas);
+    document.getElementById('duplasArea').classList.toggle('hidden', !isDuplas);
+};
+
+// Tabs
 document.querySelectorAll('.menu-btn').forEach(btn => {
     btn.onclick = () => {
         document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        ['homeTab','placarTab','rankingTab','adminTab'].forEach(t => document.getElementById(t).classList.add('hidden'));
+        ['homeTab', 'placarTab', 'rankingTab', 'adminTab'].forEach(t => {
+            document.getElementById(t).classList.add('hidden');
+        });
         document.getElementById(btn.dataset.tab).classList.remove('hidden');
     };
 });
 
-// INICIAR
-loadPlayers();
-loadMatches();
-loadCheckins();
-loadLosers();
+// ==================== INICIALIZAÇÃO ====================
+async function init() {
+    console.log('🚀 Iniciando aplicação...');
+    await loadPlayers();
+    await loadMatches();
+    await loadCheckins();
+    await loadLosers();
+    console.log('✅ Aplicação pronta!');
+}
+
+init();
 </script>
 </body>
 </html>
