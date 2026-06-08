@@ -4,19 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="theme-color" content="#C74B1E">
-    <title>Quarteto Tenístico | Ranking Profissional</title>
+    <title>Quarteto Tenístico | Roland Garros Style</title>
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="quarteto-tenistico.png">
-    <!-- Fontes -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <!-- Fontes oficiais Roland Garros -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;600;700&family=Roboto:wght@300;400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
     <!-- Firebase SDK -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, query, orderBy, getDocs, deleteDoc, doc, where, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, query, orderBy, getDocs, deleteDoc, doc, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
         
-        // 🔥 SUBSTITUA PELAS SUAS CREDENCIAIS
+        // 🔥 SUBSTITUA PELAS SUAS CREDENCIAIS DO FIREBASE
         const firebaseConfig = {
             apiKey: "SUA_API_KEY",
             authDomain: "SEU_AUTH_DOMAIN",
@@ -39,12 +40,12 @@
         window.getDocs = getDocs;
         window.deleteDoc = deleteDoc;
         window.doc = doc;
-        window.updateDoc = updateDoc;
         window.where = where;
         window.ref = ref;
         window.uploadBytes = uploadBytes;
         window.getDownloadURL = getDownloadURL;
     </script>
+    
     <style>
         * {
             margin: 0;
@@ -53,13 +54,13 @@
         }
 
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Roboto', sans-serif;
             min-height: 100vh;
-            background: #1a1a1a;
+            background: #2A1A0E;
         }
 
-        /* Fundo com imagem real de Roland Garros */
-        .roland-garros-bg {
+        /* Fundo com imagem profissional de quadra Roland Garros */
+        .roland-bg {
             position: fixed;
             top: 0;
             left: 0;
@@ -67,54 +68,232 @@
             height: 100%;
             background-image: url('https://images.pexels.com/photos/1263121/tennis-court-red-clay-1263121.jpg?auto=compress&cs=tinysrgb&w=1600');
             background-size: cover;
-            background-position: center;
+            background-position: center 40%;
             background-repeat: no-repeat;
             z-index: -2;
         }
 
-        .roland-garros-bg::after {
+        .roland-bg::after {
             content: "";
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.5) 100%);
+            background: rgba(0,0,0,0.65);
+            z-index: -1;
+        }
+
+        /* Textura de saibro */
+        .clay-texture {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(circle at 25% 40%, rgba(200,100,40,0.15) 1px, transparent 1px);
+            background-size: 35px 35px;
+            pointer-events: none;
             z-index: -1;
         }
 
         .container {
-            max-width: 700px;
+            max-width: 680px;
             margin: 0 auto;
             padding: 20px 16px 100px 16px;
             position: relative;
             z-index: 2;
         }
 
-        /* Header */
-        .header {
-            background: rgba(0,0,0,0.75);
-            backdrop-filter: blur(8px);
-            border-radius: 16px;
-            padding: 24px 20px;
+        /* ===== HEADER ===== */
+        .rg-header {
+            text-align: center;
             margin-bottom: 24px;
-            border-bottom: 3px solid #D96C1A;
+        }
+
+        .rg-header h1 {
+            font-family: 'Roboto Condensed', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: #FFB347;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        }
+
+        .rg-header .sub {
+            font-family: 'Roboto', sans-serif;
+            font-size: 0.7rem;
+            color: #E0B080;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* ===== PRÓXIMO JOGO - DESTAQUE NO TOPO ===== */
+        .next-match-card {
+            background: rgba(0,0,0,0.75);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid #D96C1A;
             text-align: center;
         }
 
-        .header h1 {
-            font-size: 1.8rem;
-            font-weight: 800;
+        .next-match-title {
+            font-family: 'Roboto Condensed', sans-serif;
+            font-size: 0.85rem;
+            letter-spacing: 2px;
             color: #FFB347;
-            letter-spacing: -0.5px;
+            margin-bottom: 16px;
         }
 
-        .header .slogan {
+        .next-match-players {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .next-player {
+            text-align: center;
+        }
+
+        .next-player-photo {
+            width: 80px;
+            height: 80px;
+            border-radius: 80px;
+            object-fit: cover;
+            border: 3px solid #D96C1A;
+            background: #2A1A0E;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+        }
+
+        .next-player-name {
+            margin-top: 10px;
+            font-weight: 700;
+            color: #FFF;
+            font-size: 1rem;
+        }
+
+        .vs-divider {
+            font-family: 'Roboto Condensed', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #D96C1A;
+            background: rgba(0,0,0,0.5);
+            padding: 5px 12px;
+            border-radius: 40px;
+        }
+
+        .checkin-status {
+            margin-top: 16px;
             font-size: 0.75rem;
             color: #CCC;
-            margin-top: 8px;
-            letter-spacing: 1px;
         }
+
+        /* ===== CARDS COM ÍCONES SVG ===== */
+        .card {
+            background: rgba(30,22,16,0.88);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(217,108,26,0.4);
+            transition: all 0.2s;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 18px;
+            font-family: 'Roboto Condensed', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #FFB347;
+            border-left: 3px solid #D96C1A;
+            padding-left: 12px;
+        }
+
+        .card-header svg {
+            width: 24px;
+            height: 24px;
+            fill: #D96C1A;
+        }
+
+        /* Botões com degrade saibro */
+        .btn-clay {
+            background: linear-gradient(135deg, #D96C1A, #A23F0A);
+            border: none;
+            padding: 12px 20px;
+            border-radius: 40px;
+            font-family: 'Roboto', sans-serif;
+            font-weight: 700;
+            color: white;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+        }
+
+        .btn-clay:active {
+            transform: scale(0.97);
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 40px;
+            border: 1px solid #D96C1A;
+            background: #2A2018;
+            font-family: 'Roboto', sans-serif;
+            color: #FFF;
+            margin-bottom: 12px;
+        }
+
+        .ranking-item {
+            background: #2A2018;
+            border-radius: 40px;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 3px solid #D96C1A;
+        }
+
+        .loser-item {
+            background: #3A2010;
+            border-left-color: #FF6666;
+        }
+
+        .player-item {
+            background: #2A2018;
+            border-radius: 40px;
+            padding: 12px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .player-photo-sm {
+            width: 36px;
+            height: 36px;
+            border-radius: 36px;
+            object-fit: cover;
+        }
+
+        .highlights-img {
+            width: 100%;
+            border-radius: 12px;
+            margin-top: 12px;
+            max-height: 200px;
+            object-fit: cover;
+        }
+
+        .hidden { display: none; }
 
         /* Menu inferior */
         .bottom-menu {
@@ -126,279 +305,133 @@
             backdrop-filter: blur(12px);
             display: flex;
             justify-content: space-around;
-            padding: 12px 16px;
+            padding: 10px 16px;
             border-top: 1px solid #D96C1A;
-            z-index: 30;
         }
 
         .menu-btn {
             background: transparent;
             border: none;
-            padding: 10px 16px;
+            padding: 8px 12px;
             border-radius: 40px;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Roboto', sans-serif;
             font-weight: 600;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: #BBB;
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 4px;
             cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .menu-btn i {
-            font-size: 1.3rem;
         }
 
         .menu-btn.active {
             color: #D96C1A;
-            background: rgba(217,108,26,0.15);
         }
 
-        /* Cards com cantos menos arredondados */
-        .card {
-            background: rgba(20,18,16,0.92);
-            backdrop-filter: blur(10px);
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-            border: 1px solid rgba(217,108,26,0.3);
-            transition: all 0.2s;
-        }
-
-        .card-title {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: #FFB347;
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            border-left: 3px solid #D96C1A;
-            padding-left: 12px;
-        }
-
-        /* Botões com degrade */
-        .btn-gradient {
-            background: linear-gradient(135deg, #D96C1A, #A23F0A);
-            border: none;
-            padding: 12px 20px;
-            border-radius: 8px;
-            font-family: 'Inter', sans-serif;
-            font-weight: 700;
-            color: white;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            width: 100%;
-        }
-
-        .btn-gradient:active {
-            transform: scale(0.98);
-            background: linear-gradient(135deg, #C05A10, #8B3008);
-        }
-
-        .btn-danger {
-            background: linear-gradient(135deg, #8B4513, #5C2E0A);
-        }
-
-        input, select {
-            width: 100%;
-            padding: 12px 16px;
-            border-radius: 8px;
-            border: 1px solid #444;
-            background: #2A2520;
-            font-family: 'Inter', sans-serif;
-            font-size: 0.9rem;
-            color: #FFF;
-            margin-bottom: 12px;
-        }
-
-        input:focus, select:focus {
-            outline: none;
-            border-color: #D96C1A;
-        }
-
-        /* Ranking */
-        .ranking-item {
-            background: #2A2520;
-            border-radius: 8px;
-            padding: 12px 16px;
-            margin-bottom: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-left: 3px solid #D96C1A;
-        }
-
-        .rank-points {
-            color: #FFB347;
-            font-weight: 700;
-        }
-
-        .player-item {
-            background: #2A2520;
-            border-radius: 8px;
-            padding: 12px;
-            margin-bottom: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .player-photo {
-            width: 40px;
-            height: 40px;
-            border-radius: 40px;
-            object-fit: cover;
-            background: #444;
-        }
-
-        .loser-trophy {
-            background: linear-gradient(135deg, #5C2E0A, #3A1A05);
-            border-left: 3px solid #FF4444;
-        }
-
-        .loser-trophy .rank-points {
-            color: #FF8888;
-        }
-
-        .next-match {
-            background: #1A3A1A;
-            border: 1px solid #2E7D32;
-            text-align: center;
-            padding: 16px;
-            border-radius: 12px;
-        }
-
-        .highlights-img {
-            width: 100%;
-            border-radius: 8px;
-            margin-top: 12px;
-            max-height: 200px;
-            object-fit: cover;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .photo-upload-area {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            margin-top: 8px;
-        }
-
-        .photo-preview {
-            width: 50px;
-            height: 50px;
-            border-radius: 40px;
-            object-fit: cover;
-        }
-
-        .checkin-list {
-            background: #2A2520;
-            border-radius: 8px;
-            padding: 12px;
-            margin-top: 12px;
-            font-size: 0.8rem;
-        }
+        .menu-btn i { font-size: 1.2rem; }
     </style>
 </head>
 <body>
-<div class="roland-garros-bg"></div>
+<div class="roland-bg"></div>
+<div class="clay-texture"></div>
 
 <div class="container">
-    <div class="header">
-        <h1>🎾 QUARTETO TENÍSTICO</h1>
-        <div class="slogan">SENDO RUIM EM MAIS UM ESPORTE • ROLAND GARROS</div>
+    <div class="rg-header">
+        <h1>QUARTETO TENÍSTICO</h1>
+        <div class="sub">ROLAND GARROS • SAIBRO CLUB</div>
+    </div>
+
+    <!-- PRÓXIMO JOGO EM DESTAQUE -->
+    <div class="next-match-card" id="next-match-card">
+        <div class="next-match-title">🎾 PRÓXIMO DUELO 🎾</div>
+        <div id="next-match-players-container" class="next-match-players">
+            <div class="next-player">
+                <div class="next-player-photo" style="background:#D96C1A20; display:flex; align-items:center; justify-content:center;">
+                    <i class="fas fa-user-circle" style="font-size:50px; color:#D96C1A;"></i>
+                </div>
+                <div class="next-player-name">Aguardando</div>
+            </div>
+            <div class="vs-divider">VS</div>
+            <div class="next-player">
+                <div class="next-player-photo" style="background:#D96C1A20; display:flex; align-items:center; justify-content:center;">
+                    <i class="fas fa-user-circle" style="font-size:50px; color:#D96C1A;"></i>
+                </div>
+                <div class="next-player-name">Aguardando</div>
+            </div>
+        </div>
+        <div id="next-match-status" class="checkin-status">⏳ Aguardando check-ins...</div>
     </div>
 
     <div id="home-tab">
-        <!-- Próximo Jogo baseado em check-ins -->
+        <!-- Troféu Perdedores -->
         <div class="card">
-            <div class="card-title"><i class="fas fa-calendar-alt"></i> Próximo Jogo</div>
-            <div id="next-match-container" class="next-match">
-                <p id="next-match-text">Carregando...</p>
+            <div class="card-header">
+                <svg viewBox="0 0 24 24" width="24" height="24"><path d="M12 2L15 8.5L22 9.5L17 14L18.5 21L12 17.5L5.5 21L7 14L2 9.5L9 8.5L12 2Z" fill="#D96C1A"/></svg>
+                TROFÉU PERDEDORES 🏆💀
             </div>
-        </div>
-
-        <!-- Troféu da Dupla Perdedora (hostilização) -->
-        <div class="card">
-            <div class="card-title"><i class="fas fa-skull"></i> 🏆 TROFÉU PERDEDORES 🏆</div>
             <div id="losers-ranking"></div>
-            <p style="font-size:0.7rem; color:#FF8888; margin-top:8px; text-align:center;">⚠️ OS QUE MAIS PERDERAM ⚠️</p>
         </div>
 
         <div class="card">
-            <div class="card-title"><i class="fas fa-film"></i> Último Highlight</div>
-            <img id="highlights-img" class="highlights-img" src="" alt="Highlight">
-            <p id="highlights-desc" style="margin-top: 10px; font-size:0.8rem; color:#CCC;"></p>
+            <div class="card-header">
+                <svg viewBox="0 0 24 24" width="24" height="24"><circle cx="12" cy="12" r="10" stroke="#D96C1A" stroke-width="2" fill="none"/><path d="M12 8v4l3 3" stroke="#D96C1A" stroke-width="2" fill="none"/></svg>
+                Último Highlight
+            </div>
+            <img id="highlights-img" class="highlights-img" src="">
+            <p id="highlights-desc" style="margin-top:10px; font-size:0.8rem; color:#CCC;"></p>
         </div>
 
         <div class="card">
-            <div class="card-title"><i class="fas fa-check-circle"></i> Check-in</div>
+            <div class="card-header">
+                <svg viewBox="0 0 24 24" width="24" height="24"><path d="M20 12v8H4v-8M12 2v6M8 6l4-4 4 4" stroke="#D96C1A" stroke-width="2" fill="none"/></svg>
+                Check-in da Rodada
+            </div>
             <select id="checkin-player-select"></select>
-            <button class="btn-gradient" id="do-checkin">✅ Marcar Presença</button>
-            <div id="checkin-list" class="checkin-list"></div>
+            <button class="btn-clay" id="do-checkin">✅ Marcar Presença</button>
+            <div id="checkin-list" style="margin-top:16px; font-size:0.8rem;"></div>
         </div>
 
         <div class="card">
-            <div class="card-title"><i class="fas fa-camera"></i> Enviar Foto</div>
+            <div class="card-header">
+                <svg viewBox="0 0 24 24" width="24" height="24"><rect x="2" y="6" width="20" height="12" rx="2" stroke="#D96C1A" stroke-width="2" fill="none"/><circle cx="12" cy="12" r="2" fill="#D96C1A"/></svg>
+                Enviar Foto
+            </div>
             <input type="file" id="match-photo" accept="image/*">
-            <button class="btn-gradient" id="upload-photo-btn">⭐ Destacar como Melhor Momento</button>
+            <button class="btn-clay" id="upload-photo-btn">⭐ Destacar Momento</button>
         </div>
     </div>
 
     <div id="registro-tab" class="hidden">
         <div class="card">
-            <div class="card-title"><i class="fas fa-clipboard-list"></i> Registrar Partida</div>
-            <select id="match-type">
-                <option value="simples">Simples</option>
-                <option value="duplas">Duplas</option>
-            </select>
-            <select id="player1"></select>
-            <select id="player2"></select>
-            <div id="duplas-fields" class="hidden">
-                <select id="player3"></select>
-                <select id="player4"></select>
-            </div>
+            <div class="card-header">📋 Registrar Partida</div>
+            <select id="match-type"><option value="simples">Simples</option><option value="duplas">Duplas</option></select>
+            <select id="player1"></select><select id="player2"></select>
+            <div id="duplas-fields" class="hidden"><select id="player3"></select><select id="player4"></select></div>
             <select id="winner-select"></select>
-            <button class="btn-gradient" id="save-match">Salvar Partida</button>
+            <button class="btn-clay" id="save-match">Salvar Partida</button>
         </div>
     </div>
 
     <div id="rankings-tab" class="hidden">
-        <div class="card">
-            <div class="card-title"><i class="fas fa-user"></i> Ranking Simples (Vitórias)</div>
-            <div id="ranking-simples"></div>
-        </div>
-        <div class="card">
-            <div class="card-title"><i class="fas fa-users"></i> Ranking Duplas (Títulos)</div>
-            <div id="ranking-duplas"></div>
-        </div>
+        <div class="card"><div class="card-header">🏆 Ranking Simples</div><div id="ranking-simples"></div></div>
+        <div class="card"><div class="card-header">👥 Ranking Duplas</div><div id="ranking-duplas"></div></div>
     </div>
 
     <div id="admin-tab" class="hidden">
         <div class="card">
-            <div class="card-title"><i class="fas fa-user-plus"></i> Adicionar Jogador + Foto</div>
-            <input type="text" id="new-player-name" placeholder="Nome completo">
+            <div class="card-header">➕ Adicionar Jogador + Foto</div>
+            <input type="text" id="new-player-name" placeholder="Nome">
             <input type="file" id="player-photo" accept="image/*">
-            <div id="photo-preview" style="margin-bottom:12px;"></div>
-            <button class="btn-gradient" id="add-player">Adicionar Jogador</button>
+            <div id="photo-preview"></div>
+            <button class="btn-clay" id="add-player">Adicionar</button>
         </div>
         <div class="card">
-            <div class="card-title"><i class="fas fa-user-minus"></i> Remover Jogador</div>
+            <div class="card-header">🗑️ Remover Jogador</div>
             <select id="delete-player-select"></select>
-            <button class="btn-gradient btn-danger" id="delete-player">Remover</button>
+            <button class="btn-clay" id="delete-player">Remover</button>
         </div>
-        <div class="card">
-            <div class="card-title"><i class="fas fa-list"></i> Membros do Clube</div>
-            <div id="players-list-admin"></div>
-        </div>
+        <div class="card"><div class="card-header">📋 Membros</div><div id="players-list-admin"></div></div>
     </div>
 
     <div class="bottom-menu">
