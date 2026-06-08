@@ -12,23 +12,26 @@
         toast.className = 'toast';
         toast.innerText = message;
         document.body.appendChild(toast);
-        setTimeout(() => toast.remove(), 2000);
+        setTimeout(() => toast.remove(), 2500);
     }
 
     // ========== CARREGAR DADOS ==========
     async function loadPlayers() {
         try {
-            const q = query(collection(db, "players"), orderBy("name"));
+            const playersRef = collection(db, "players");
+            const q = query(playersRef, orderBy("name"));
             const snap = await getDocs(q);
             players = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-            console.log("Jogadores carregados:", players.length);
+            console.log("✅ Jogadores carregados:", players.length, players.map(p=>p.name));
             renderAllPlayerSelects();
             renderPlayersListAdmin();
             updateNextMatchDisplay();
             updateRankingTable();
+            return true;
         } catch (error) {
-            console.error("Erro ao carregar jogadores:", error);
-            showToast("Erro ao carregar jogadores");
+            console.error("❌ Erro ao carregar jogadores:", error);
+            showToast("Erro ao carregar jogadores: " + error.message);
+            return false;
         }
     }
 
@@ -37,7 +40,7 @@
             const q = query(collection(db, "matches"), orderBy("date", "desc"));
             const snap = await getDocs(q);
             matches = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-            console.log("Partidas carregadas:", matches.length);
+            console.log("✅ Partidas carregadas:", matches.length);
             updateRankingTable();
             updateRankingDuplas();
             updateHighlights();
@@ -72,7 +75,9 @@
 
     // ========== RENDERIZAÇÕES ==========
     function renderAllPlayerSelects() {
-        const selects = ["checkin-player-select", "delete-player-select", "loser-select", "score-player1", "score-player2"];
+        const selects = ["checkin-player-select", "delete-player-select", "loser-select", 
+                         "score-player1", "score-player2", "dupla-a1", "dupla-a2", "dupla-b1", "dupla-b2"];
+        
         selects.forEach(id => {
             const sel = document.getElementById(id);
             if(sel) {
@@ -84,15 +89,18 @@
 
     function renderPlayersListAdmin() {
         const div = document.getElementById("players-list-admin");
-        if(div && players.length > 0) {
-            div.innerHTML = players.map(p => `
-                <div style="display:flex; align-items:center; gap:10px; padding:10px; border-bottom:1px solid #F0E0D0;">
-                    <img src="${p.photoUrl || 'https://via.placeholder.com/40'}" style="width:40px;height:40px;border-radius:40px;object-fit:cover;">
-                    <span style="flex:1; font-weight:500;">${p.name}</span>
-                </div>
-            `).join('');
-        } else if(div) {
-            div.innerHTML = '<div style="padding:10px; text-align:center; color:#999;">Nenhum jogador cadastrado</div>';
+        if(div) {
+            if(players.length === 0) {
+                div.innerHTML = '<div style="padding:20px; text-align:center; color:#999;">Nenhum jogador cadastrado</div>';
+            } else {
+                div.innerHTML = players.map(p => `
+                    <div class="player-item-list">
+                        <img src="${p.photoUrl || 'https://via.placeholder.com/40'}" style="width:40px;height:40px;border-radius:40px;object-fit:cover;">
+                        <span style="flex:1; font-weight:500;">${p.name}</span>
+                        <span style="font-size:0.7rem; color:#999;">${p.id?.substring(0,6)}</span>
+                    </div>
+                `).join('');
+            }
         }
     }
 
@@ -102,11 +110,15 @@
         const sorted = Object.entries(loserCount).sort((a,b) => b[1] - a[1]).slice(0,5);
         const div = document.getElementById("losers-ranking");
         if(div) {
-            div.innerHTML = `<div style="font-weight:700; margin-bottom:8px;">🏆 RANKING PERDEDORES 🏆</div>` + 
-                (sorted.length ? sorted.map(([id, count]) => {
-                    const player = players.find(p => p.id === id);
-                    return `<div class="loser-item"><span>💀 ${player?.name || "?"}</span><span>🍂 ${count} vez(es)</span></div>`;
-                }).join('') : "<div style='padding:10px; text-align:center;'>Nenhum perdedor registrado</div>");
+            if(sorted.length === 0) {
+                div.innerHTML = '<div style="padding:10px; text-align:center;">Nenhum perdedor registrado</div>';
+            } else {
+                div.innerHTML = `<div style="font-weight:700; margin-bottom:8px;">🏆 RANKING PERDEDORES 🏆</div>` + 
+                    sorted.map(([id, count]) => {
+                        const player = players.find(p => p.id === id);
+                        return `<div class="loser-item"><span>💀 ${player?.name || "Desconhecido"}</span><span>🍂 ${count} vez(es)</span></div>`;
+                    }).join('');
+            }
         }
     }
 
@@ -129,12 +141,13 @@
             return;
         }
         div.innerHTML = recent.map(m => {
-            const winner = m.winners.map(w => players.find(p => p.id === w)?.name).join(" / ");
-            const loser = m.losers.map(l => players.find(p => p.id === l)?.name).join(" / ");
+            const winner = m.winners?.map(w => players.find(p => p.id === w)?.name).join(" / ") || "?";
+            const loser = m.losers?.map(l => players.find(p => p.id === l)?.name).join(" / ") || "?";
             const date = new Date(m.date).toLocaleDateString();
+            const typeLabel = m.type === "duplas" ? "👥 Duplas" : "🎾 Simples";
             return `<div style="padding:12px; border-bottom:1px solid #F0E0D0;">
                         <div style="font-weight:700;">${winner} venceu ${loser}</div>
-                        <div style="font-size:0.75rem; color:#D96C1A;">${m.result || "Placar não informado"} • ${date}</div>
+                        <div style="font-size:0.75rem; color:#D96C1A;">${typeLabel} • ${m.result || "Placar não informado"} • ${date}</div>
                     </div>`;
         }).join('');
     }
@@ -162,19 +175,22 @@
         const sorted = Object.entries(stats).sort((a,b) => b[1].vitorias - a[1].vitorias);
         const tbody = document.getElementById("ranking-body");
         if(tbody) {
-            tbody.innerHTML = sorted.map(([id, s], idx) => {
-                const player = players.find(p => p.id === id);
-                const percent = s.jogos > 0 ? ((s.vitorias / s.jogos) * 100).toFixed(0) : 0;
-                return `<tr>
-                    <td class="rank-pos">${idx+1}º</td>
-                    <td><div class="player-cell"><img src="${player?.photoUrl || 'https://via.placeholder.com/32'}" class="player-photo-sm"><span>${player?.name || "?"}</span></div></td>
-                    <td>${s.jogos}</td>
-                    <td style="color:#2E7D32;">${s.vitorias}</td>
-                    <td style="color:#D96C1A;">${s.derrotas}</td>
-                    <td>${percent}%</td>
-                </tr>`;
-            }).join('');
-            if(!sorted.length) tbody.innerHTML = "<tr><td colspan='6'>Nenhuma partida registrada</td></tr>";
+            if(sorted.length === 0) {
+                tbody.innerHTML = "<tr><td colspan='6'>Nenhuma partida registrada</td></tr>";
+            } else {
+                tbody.innerHTML = sorted.map(([id, s], idx) => {
+                    const player = players.find(p => p.id === id);
+                    const percent = s.jogos > 0 ? ((s.vitorias / s.jogos) * 100).toFixed(0) : 0;
+                    return `<tr>
+                        <td class="rank-pos">${idx+1}º</td>
+                        <td><div class="player-cell"><img src="${player?.photoUrl || 'https://via.placeholder.com/32'}" class="player-photo-sm"><span>${player?.name || "?"}</span></div></td>
+                        <td>${s.jogos}</td>
+                        <td style="color:#2E7D32;">${s.vitorias}</td>
+                        <td style="color:#D96C1A;">${s.derrotas}</td>
+                        <td>${percent}%</td>
+                    </tr>`;
+                }).join('');
+            }
         }
     }
 
@@ -189,15 +205,19 @@
         const sorted = Object.entries(duplaWins).sort((a,b) => b[1] - a[1]);
         const div = document.getElementById("ranking-duplas");
         if(div) {
-            div.innerHTML = sorted.map(([key, wins]) => {
-                const ids = key.split("_");
-                const p1 = players.find(p => p.id === ids[0]);
-                const p2 = players.find(p => p.id === ids[1]);
-                return `<div style="display:flex; justify-content:space-between; padding:12px; background:#FFF8F0; border-radius:40px; margin-bottom:8px;">
-                            <span>${p1?.name || "?"} / ${p2?.name || "?"}</span>
-                            <span style="color:#F47B20;">🏆 ${wins} títulos</span>
-                        </div>`;
-            }).join("") || "<div style='padding:20px; text-align:center;'>Nenhuma dupla registrada</div>";
+            if(sorted.length === 0) {
+                div.innerHTML = "<div style='padding:20px; text-align:center;'>Nenhuma dupla registrada</div>";
+            } else {
+                div.innerHTML = sorted.map(([key, wins]) => {
+                    const ids = key.split("_");
+                    const p1 = players.find(p => p.id === ids[0]);
+                    const p2 = players.find(p => p.id === ids[1]);
+                    return `<div style="display:flex; justify-content:space-between; padding:12px; background:#FFF8F0; border-radius:40px; margin-bottom:8px;">
+                                <span>${p1?.name || "?"} / ${p2?.name || "?"}</span>
+                                <span style="color:#F47B20;">🏆 ${wins} títulos</span>
+                            </div>`;
+                }).join('');
+            }
         }
     }
 
@@ -208,23 +228,25 @@
             return false;
         }
         try {
+            showToast("⏳ Adicionando jogador...");
             let photoUrl = null;
             if(file) {
                 const storageRef = ref(storage, `players/${Date.now()}_${file.name}`);
                 await uploadBytes(storageRef, file);
                 photoUrl = await getDownloadURL(storageRef);
             }
-            await addDoc(collection(db, "players"), { 
+            const docRef = await addDoc(collection(db, "players"), { 
                 name: name.trim(), 
                 photoUrl: photoUrl,
                 createdAt: new Date().toISOString()
             });
+            console.log("✅ Jogador adicionado com ID:", docRef.id);
             showToast(`✅ Jogador ${name} adicionado com sucesso!`);
             await loadPlayers();
             return true;
         } catch (error) {
-            console.error("Erro ao adicionar jogador:", error);
-            showToast("Erro ao adicionar jogador");
+            console.error("❌ Erro ao adicionar jogador:", error);
+            showToast("Erro ao adicionar jogador: " + error.message);
             return false;
         }
     }
@@ -236,7 +258,7 @@
         }
         try {
             await deleteDoc(doc(db, "players", playerId));
-            showToast("Jogador removido com sucesso");
+            showToast("✅ Jogador removido com sucesso");
             await loadPlayers();
         } catch (error) {
             console.error("Erro ao remover jogador:", error);
@@ -320,109 +342,198 @@
         }
     }
 
-    // ========== SALVAR PARTIDA COM PLACAR (NOVA FUNÇÃO) ==========
+    // ========== SALVAR PARTIDA COM PLACAR ==========
     async function saveMatchWithScore() {
-        const player1Id = document.getElementById("score-player1").value;
-        const player2Id = document.getElementById("score-player2").value;
+        const matchType = document.getElementById("match-type-score").value;
         
-        if(!player1Id || !player2Id) {
-            showToast("Selecione os dois jogadores");
-            return;
-        }
-        if(player1Id === player2Id) {
-            showToast("Selecione dois jogadores diferentes");
-            return;
-        }
+        let winnersArray = [];
+        let losersArray = [];
+        let playersArray = [];
         
-        // Pegar os placares
-        const s1p1 = parseInt(document.getElementById("set1-p1").value) || 0;
-        const s1p2 = parseInt(document.getElementById("set1-p2").value) || 0;
-        const s2p1 = parseInt(document.getElementById("set2-p1").value) || 0;
-        const s2p2 = parseInt(document.getElementById("set2-p2").value) || 0;
-        const s3p1 = parseInt(document.getElementById("set3-p1").value) || 0;
-        const s3p2 = parseInt(document.getElementById("set3-p2").value) || 0;
-        
-        // Calcular vencedor
-        let setsP1 = 0, setsP2 = 0;
-        if(s1p1 > s1p2) setsP1++;
-        else if(s1p2 > s1p1) setsP2++;
-        if(s2p1 > s2p2) setsP1++;
-        else if(s2p2 > s2p1) setsP2++;
-        if(s3p1 > s3p2) setsP1++;
-        else if(s3p2 > s3p1) setsP2++;
-        
-        let winnerId, loserId;
-        if(setsP1 > setsP2) {
-            winnerId = player1Id;
-            loserId = player2Id;
-        } else if(setsP2 > setsP1) {
-            winnerId = player2Id;
-            loserId = player1Id;
-        } else {
-            showToast("Empate! Verifique os placares");
-            return;
-        }
-        
-        // Formatar resultado
-        const sets = [];
-        if(s1p1 > 0 || s1p2 > 0) sets.push(`${s1p1}/${s1p2}`);
-        if(s2p1 > 0 || s2p2 > 0) sets.push(`${s2p1}/${s2p2}`);
-        if(s3p1 > 0 || s3p2 > 0) sets.push(`${s3p1}/${s3p2}`);
-        const result = sets.join(" • ");
-        
-        try {
-            await addDoc(collection(db, "matches"), {
-                type: "simples",
-                players: [player1Id, player2Id],
-                winners: [winnerId],
-                losers: [loserId],
-                result: result,
-                date: new Date().toISOString(),
-                timestamp: Date.now()
-            });
+        if(matchType === "simples") {
+            const player1Id = document.getElementById("score-player1").value;
+            const player2Id = document.getElementById("score-player2").value;
             
-            showToast(`🎾 Partida registrada! Vencedor: ${players.find(p=>p.id===winnerId)?.name}`);
+            if(!player1Id || !player2Id) {
+                showToast("Selecione os dois jogadores");
+                return;
+            }
+            if(player1Id === player2Id) {
+                showToast("Selecione dois jogadores diferentes");
+                return;
+            }
             
-            // Limpar campos
-            document.getElementById("set1-p1").value = "";
-            document.getElementById("set1-p2").value = "";
-            document.getElementById("set2-p1").value = "";
-            document.getElementById("set2-p2").value = "";
-            document.getElementById("set3-p1").value = "";
-            document.getElementById("set3-p2").value = "";
-            document.getElementById("score-player1").value = "";
-            document.getElementById("score-player2").value = "";
+            playersArray = [player1Id, player2Id];
             
-            await loadMatches();
-        } catch (error) {
-            console.error("Erro ao salvar partida:", error);
-            showToast("Erro ao salvar partida");
+            // Pegar os placares
+            const s1p1 = parseInt(document.getElementById("set1-p1").value) || 0;
+            const s1p2 = parseInt(document.getElementById("set1-p2").value) || 0;
+            const s2p1 = parseInt(document.getElementById("set2-p1").value) || 0;
+            const s2p2 = parseInt(document.getElementById("set2-p2").value) || 0;
+            const s3p1 = parseInt(document.getElementById("set3-p1").value) || 0;
+            const s3p2 = parseInt(document.getElementById("set3-p2").value) || 0;
+            
+            let setsP1 = 0, setsP2 = 0;
+            if(s1p1 > s1p2) setsP1++;
+            else if(s1p2 > s1p1) setsP2++;
+            if(s2p1 > s2p2) setsP1++;
+            else if(s2p2 > s2p1) setsP2++;
+            if(s3p1 > s3p2) setsP1++;
+            else if(s3p2 > s3p1) setsP2++;
+            
+            if(setsP1 > setsP2) {
+                winnersArray = [player1Id];
+                losersArray = [player2Id];
+            } else if(setsP2 > setsP1) {
+                winnersArray = [player2Id];
+                losersArray = [player1Id];
+            } else {
+                showToast("Empate! Verifique os placares");
+                return;
+            }
+            
+            // Formatar resultado
+            const sets = [];
+            if(s1p1 > 0 || s1p2 > 0) sets.push(`${s1p1}/${s1p2}`);
+            if(s2p1 > 0 || s2p2 > 0) sets.push(`${s2p1}/${s2p2}`);
+            if(s3p1 > 0 || s3p2 > 0) sets.push(`${s3p1}/${s3p2}`);
+            const result = sets.join(" • ");
+            
+            try {
+                await addDoc(collection(db, "matches"), {
+                    type: "simples",
+                    players: playersArray,
+                    winners: winnersArray,
+                    losers: losersArray,
+                    result: result,
+                    date: new Date().toISOString(),
+                    timestamp: Date.now()
+                });
+                showToast(`🎾 Partida registrada!`);
+                clearScoreFields();
+                await loadMatches();
+            } catch (error) {
+                console.error("Erro ao salvar partida:", error);
+                showToast("Erro ao salvar partida");
+            }
+            
+        } else { // DUPLAS
+            const a1 = document.getElementById("dupla-a1").value;
+            const a2 = document.getElementById("dupla-a2").value;
+            const b1 = document.getElementById("dupla-b1").value;
+            const b2 = document.getElementById("dupla-b2").value;
+            
+            if(!a1 || !a2 || !b1 || !b2) {
+                showToast("Selecione todos os 4 jogadores");
+                return;
+            }
+            
+            playersArray = [a1, a2, b1, b2];
+            
+            const s1a = parseInt(document.getElementById("set1-p1").value) || 0;
+            const s1b = parseInt(document.getElementById("set1-p2").value) || 0;
+            const s2a = parseInt(document.getElementById("set2-p1").value) || 0;
+            const s2b = parseInt(document.getElementById("set2-p2").value) || 0;
+            const s3a = parseInt(document.getElementById("set3-p1").value) || 0;
+            const s3b = parseInt(document.getElementById("set3-p2").value) || 0;
+            
+            let setsA = 0, setsB = 0;
+            if(s1a > s1b) setsA++;
+            else if(s1b > s1a) setsB++;
+            if(s2a > s2b) setsA++;
+            else if(s2b > s2a) setsB++;
+            if(s3a > s3b) setsA++;
+            else if(s3b > s3a) setsB++;
+            
+            if(setsA > setsB) {
+                winnersArray = [a1, a2];
+                losersArray = [b1, b2];
+            } else if(setsB > setsA) {
+                winnersArray = [b1, b2];
+                losersArray = [a1, a2];
+            } else {
+                showToast("Empate! Verifique os placares");
+                return;
+            }
+            
+            const sets = [];
+            if(s1a > 0 || s1b > 0) sets.push(`${s1a}/${s1b}`);
+            if(s2a > 0 || s2b > 0) sets.push(`${s2a}/${s2b}`);
+            if(s3a > 0 || s3b > 0) sets.push(`${s3a}/${s3b}`);
+            const result = sets.join(" • ");
+            
+            try {
+                await addDoc(collection(db, "matches"), {
+                    type: "duplas",
+                    players: playersArray,
+                    winners: winnersArray,
+                    losers: losersArray,
+                    result: result,
+                    date: new Date().toISOString(),
+                    timestamp: Date.now()
+                });
+                showToast(`🎾 Partida de duplas registrada!`);
+                clearScoreFields();
+                await loadMatches();
+            } catch (error) {
+                console.error("Erro ao salvar partida:", error);
+                showToast("Erro ao salvar partida");
+            }
         }
     }
 
-    // Calcular vencedor em tempo real
+    function clearScoreFields() {
+        document.getElementById("set1-p1").value = "";
+        document.getElementById("set1-p2").value = "";
+        document.getElementById("set2-p1").value = "";
+        document.getElementById("set2-p2").value = "";
+        document.getElementById("set3-p1").value = "";
+        document.getElementById("set3-p2").value = "";
+        document.getElementById("score-player1").value = "";
+        document.getElementById("score-player2").value = "";
+        document.getElementById("dupla-a1").value = "";
+        document.getElementById("dupla-a2").value = "";
+        document.getElementById("dupla-b1").value = "";
+        document.getElementById("dupla-b2").value = "";
+    }
+
     function calculateWinnerPreview() {
-        const s1p1 = parseInt(document.getElementById("set1-p1").value) || 0;
-        const s1p2 = parseInt(document.getElementById("set1-p2").value) || 0;
-        const s2p1 = parseInt(document.getElementById("set2-p1").value) || 0;
-        const s2p2 = parseInt(document.getElementById("set2-p2").value) || 0;
-        const s3p1 = parseInt(document.getElementById("set3-p1").value) || 0;
-        const s3p2 = parseInt(document.getElementById("set3-p2").value) || 0;
+        const matchType = document.getElementById("match-type-score")?.value || "simples";
+        const s1a = parseInt(document.getElementById("set1-p1")?.value) || 0;
+        const s1b = parseInt(document.getElementById("set1-p2")?.value) || 0;
+        const s2a = parseInt(document.getElementById("set2-p1")?.value) || 0;
+        const s2b = parseInt(document.getElementById("set2-p2")?.value) || 0;
+        const s3a = parseInt(document.getElementById("set3-p1")?.value) || 0;
+        const s3b = parseInt(document.getElementById("set3-p2")?.value) || 0;
         
-        let setsP1 = 0, setsP2 = 0;
-        if(s1p1 > s1p2) setsP1++;
-        else if(s1p2 > s1p1) setsP2++;
-        if(s2p1 > s2p2) setsP1++;
-        else if(s2p2 > s2p1) setsP2++;
-        if(s3p1 > s3p2) setsP1++;
-        else if(s3p2 > s3p1) setsP2++;
+        let setsA = 0, setsB = 0;
+        if(s1a > s1b) setsA++;
+        else if(s1b > s1a) setsB++;
+        if(s2a > s2b) setsA++;
+        else if(s2b > s2a) setsB++;
+        if(s3a > s3b) setsA++;
+        else if(s3b > s3a) setsB++;
         
         const winnerDiv = document.getElementById("winner-calc");
         if(winnerDiv) {
-            if(setsP1 > setsP2) winnerDiv.innerHTML = "🏆 VENCEDOR: JOGADOR 1 🏆";
-            else if(setsP2 > setsP1) winnerDiv.innerHTML = "🏆 VENCEDOR: JOGADOR 2 🏆";
+            if(setsA > setsB) winnerDiv.innerHTML = "🏆 VENCEDOR: TIME A 🏆";
+            else if(setsB > setsA) winnerDiv.innerHTML = "🏆 VENCEDOR: TIME B 🏆";
             else winnerDiv.innerHTML = "⚖️ Aguardando placar válido...";
         }
+    }
+
+    function toggleDuplaFields() {
+        const matchType = document.getElementById("match-type-score")?.value;
+        const simplesDiv = document.getElementById("simples-fields");
+        const duplasDiv = document.getElementById("duplas-fields-score");
+        if(matchType === "duplas") {
+            if(simplesDiv) simplesDiv.classList.add("hidden");
+            if(duplasDiv) duplasDiv.classList.remove("hidden");
+        } else {
+            if(simplesDiv) simplesDiv.classList.remove("hidden");
+            if(duplasDiv) duplasDiv.classList.add("hidden");
+        }
+        calculateWinnerPreview();
     }
 
     async function updateNextMatchDisplay() {
@@ -506,6 +617,9 @@
         const saveScoreBtn = document.getElementById("save-score-match");
         if(saveScoreBtn) saveScoreBtn.onclick = saveMatchWithScore;
         
+        const matchTypeSelect = document.getElementById("match-type-score");
+        if(matchTypeSelect) matchTypeSelect.onchange = toggleDuplaFields;
+        
         // Preview de foto do jogador
         const photoInput = document.getElementById("player-photo");
         if(photoInput) {
@@ -531,13 +645,14 @@
 
     // ========== INIT ==========
     document.addEventListener("DOMContentLoaded", async () => {
-        console.log("Iniciando aplicação...");
+        console.log("🚀 Iniciando aplicação...");
         setupTabs();
         bindEvents();
         await loadPlayers();
         await loadMatches();
         await loadCheckins();
         await loadLosers();
-        console.log("Aplicação inicializada com sucesso!");
+        toggleDuplaFields();
+        console.log("✅ Aplicação inicializada com sucesso!");
     });
 })();
