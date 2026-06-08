@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Quarteto Tenístico</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
@@ -15,7 +15,7 @@
         
         body {
             font-family: 'Inter', sans-serif;
-            background: #FFFFFF;
+            background: #F5F5F0;
             min-height: 100vh;
         }
         
@@ -26,7 +26,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: radial-gradient(circle at 25% 40%, rgba(210, 110, 40, 0.08) 1px, transparent 1px);
+            background-image: radial-gradient(circle at 25% 40%, rgba(210, 110, 40, 0.06) 1px, transparent 1px);
             background-size: 35px 35px;
             pointer-events: none;
             z-index: 0;
@@ -40,126 +40,170 @@
             z-index: 2;
         }
         
-        /* Header */
+        /* Header com logo */
         .header {
             background: linear-gradient(135deg, #2E7D32, #1B5E20);
-            border-radius: 16px;
-            padding: 20px;
+            border-radius: 24px;
+            padding: 16px 20px;
             margin-bottom: 20px;
-            text-align: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
         
-        .header h1 {
-            font-size: 1.8rem;
-            font-weight: 700;
+        .logo {
+            width: 65px;
+            height: 65px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2E7D32;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        
+        .logo img {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        .header-text {
+            flex: 1;
+        }
+        
+        .header-text h1 {
+            font-family: 'Anton', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 400;
             color: #F5A623;
             letter-spacing: 1px;
         }
         
-        .header p {
-            font-size: 0.7rem;
+        .header-text p {
+            font-size: 0.65rem;
             color: #E8F5E9;
-            margin-top: 5px;
+            margin-top: 3px;
         }
         
         /* Card Próximo Duelo */
         .next-card {
-            background: #FFF8F0;
-            border-radius: 16px;
+            background: white;
+            border-radius: 20px;
             padding: 18px;
             margin-bottom: 20px;
-            border: 1px solid #F5A623;
-            text-align: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border: 1px solid #E8DCC8;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.05);
         }
         
         .next-title {
-            font-size: 0.9rem;
-            font-weight: 700;
+            font-family: 'Anton', sans-serif;
+            font-size: 1rem;
+            font-weight: 400;
             color: #D96C1A;
             margin-bottom: 15px;
             letter-spacing: 1px;
+            text-align: center;
         }
         
         .next-players {
             display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 20px;
+            flex-direction: column;
+            gap: 12px;
             margin-bottom: 15px;
-            flex-wrap: wrap;
         }
         
-        .next-player {
-            text-align: center;
-            background: #FFFFFF;
-            padding: 12px 16px;
-            border-radius: 16px;
-            min-width: 110px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            border: 1px solid #E8DCC8;
+        .next-player-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #FFF8F0;
+            padding: 10px 15px;
+            border-radius: 50px;
+            border-left: 3px solid #F5A623;
+        }
+        
+        .next-player-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
         
         .next-player-img {
-            width: 60px;
-            height: 60px;
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
-            background: #F0E0D0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 8px;
-            border: 2px solid #F5A623;
             object-fit: cover;
+            border: 2px solid #F5A623;
+            background: #F0E0D0;
         }
         
         .next-player-name {
             font-weight: 600;
             color: #4A2A1A;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
         }
         
-        .vs {
-            font-weight: 800;
+        .cancel-btn {
+            background: transparent;
+            border: 1px solid #D96C1A;
             color: #D96C1A;
-            font-size: 1.2rem;
-            background: #FFF0E0;
             padding: 5px 12px;
             border-radius: 30px;
+            font-size: 0.65rem;
+            cursor: pointer;
+            width: auto;
+        }
+        
+        .vs-badge {
+            background: #F5A623;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            font-weight: bold;
         }
         
         .match-date {
             font-size: 0.7rem;
             color: #2E7D32;
-            margin-top: 10px;
-            padding-top: 8px;
+            text-align: center;
+            margin-top: 12px;
+            padding-top: 10px;
             border-top: 1px solid #E8DCC8;
         }
         
         .match-status {
             font-size: 0.7rem;
             color: #D96C1A;
+            text-align: center;
             margin-top: 8px;
         }
         
         /* Cards Gerais */
         .card {
-            background: #FFFFFF;
-            border-radius: 16px;
+            background: white;
+            border-radius: 20px;
             padding: 16px;
             margin-bottom: 16px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
             border: 1px solid #E8DCC8;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
         }
         
         .card-title {
-            font-weight: 700;
-            font-size: 0.9rem;
+            font-family: 'Anton', sans-serif;
+            font-size: 1rem;
+            font-weight: 400;
             color: #D96C1A;
             margin-bottom: 14px;
             border-left: 3px solid #F5A623;
             padding-left: 10px;
+            letter-spacing: 0.5px;
         }
         
         input, select {
@@ -187,14 +231,14 @@
         button:active { transform: scale(0.97); background: #E67E22; }
         .btn-outline { background: transparent; border: 1px solid #F5A623; color: #F5A623; }
         .btn-danger { background: #C0392B; }
-        .btn-small { width: auto; padding: 6px 12px; font-size: 0.7rem; margin-top: 5px; }
+        .btn-small { width: auto; padding: 6px 12px; font-size: 0.7rem; }
         
         .player-item {
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 10px;
-            background: #F8F8F8;
+            background: #FAFAFA;
             border-radius: 12px;
             margin-bottom: 8px;
         }
@@ -215,14 +259,8 @@
             font-size: 0.85rem;
         }
         
-        .winner-highlight {
-            color: #2E7D32;
-            font-weight: 700;
-        }
-        
-        .loser-highlight {
-            color: #D96C1A;
-        }
+        .winner-highlight { color: #2E7D32; font-weight: 700; }
+        .loser-highlight { color: #D96C1A; }
         
         .score-set { text-align: center; margin: 12px 0; }
         .score-input { width: 55px; text-align: center; margin: 0 3px; padding: 8px; border-radius: 10px; }
@@ -232,7 +270,7 @@
             bottom: 0;
             left: 0;
             right: 0;
-            background: #FFFFFF;
+            background: white;
             display: flex;
             justify-content: space-around;
             padding: 10px;
@@ -284,11 +322,11 @@
             transform: translate(-50%, -50%);
             background: white;
             padding: 20px;
-            border-radius: 16px;
+            border-radius: 20px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.2);
             z-index: 2000;
             text-align: center;
-            min-width: 250px;
+            min-width: 260px;
         }
         
         .modal-buttons { display: flex; gap: 10px; margin-top: 15px; }
@@ -312,7 +350,11 @@
             text-align: center;
         }
         
-        .dupla-highlight strong { color: #2E7D32; }
+        .checkin-time {
+            font-size: 0.6rem;
+            color: #8B7355;
+            margin-left: 10px;
+        }
     </style>
 </head>
 <body>
@@ -321,18 +363,19 @@
 
 <div class="container">
     <div class="header">
-        <h1>🎾 QUARTETO TENÍSTICO</h1>
-        <p>SENDO RUIM EM MAIS UM ESPORTE</p>
+        <div class="logo">
+            <img src="quarteto tenistico.png" alt="Logo" onerror="this.innerHTML='QT'">
+        </div>
+        <div class="header-text">
+            <h1>QUARTETO TENÍSTICO</h1>
+            <p>SENDO RUIM EM MAIS UM ESPORTE</p>
+        </div>
     </div>
 
     <!-- PRÓXIMO DUELO -->
-    <div class="next-card">
+    <div class="next-card" id="nextMatchCard">
         <div class="next-title">PRÓXIMO DUELO</div>
-        <div id="nextPlayers" class="next-players">
-            <div class="next-player"><div class="next-player-img"><i class="fas fa-user" style="font-size:28px; color:#B8865A;"></i></div><div class="next-player-name">---</div></div>
-            <span class="vs">VS</span>
-            <div class="next-player"><div class="next-player-img"><i class="fas fa-user" style="font-size:28px; color:#B8865A;"></i></div><div class="next-player-name">---</div></div>
-        </div>
+        <div id="nextPlayersList"></div>
         <div id="matchDate" class="match-date"></div>
         <div id="matchStatus" class="match-status"></div>
     </div>
@@ -340,20 +383,21 @@
     <!-- HOME -->
     <div id="homeTab">
         <div class="card">
-            <div class="card-title"><i class="fas fa-skull"></i> PERDEDOR DA RODADA</div>
+            <div class="card-title">PERDEDOR DA RODADA</div>
             <select id="loserSelect"></select>
             <div class="flex-row" style="margin-bottom: 10px;">
-                <input type="text" id="loserPhotoUrl" placeholder="URL da foto do perdedor (opcional)" style="flex:1">
+                <input type="text" id="loserPhotoUrl" placeholder="URL da foto do perdedor" style="flex:1">
             </div>
-            <button id="addLoserBtn">💀 HOSTILIZAR PERDEDOR</button>
+            <button id="addLoserBtn">HOSTILIZAR PERDEDOR</button>
             <div id="loserList" style="margin-top: 12px;"></div>
         </div>
 
         <div class="card">
-            <div class="card-title"><i class="fas fa-check-circle"></i> CHECK-IN</div>
+            <div class="card-title">CHECK-IN</div>
             <select id="checkinSelect"></select>
             <input type="date" id="checkinDate">
-            <button id="checkinBtn">✅ CONFIRMAR PRESENÇA</button>
+            <input type="time" id="checkinTime" value="19:00">
+            <button id="checkinBtn">CONFIRMAR PRESENÇA</button>
             <div id="checkinList" style="margin-top: 12px;"></div>
         </div>
     </div>
@@ -374,14 +418,14 @@
 
             <div id="duplasArea" class="hidden">
                 <div class="dupla-highlight">
-                    <strong>🎾 TIME A</strong>
+                    <strong>TIME A</strong>
                     <div class="flex-row" style="margin-top: 8px;">
                         <select id="dupla1" style="flex:1"></select>
                         <select id="dupla2" style="flex:1"></select>
                     </div>
                 </div>
                 <div class="dupla-highlight">
-                    <strong>🎾 TIME B</strong>
+                    <strong>TIME B</strong>
                     <div class="flex-row" style="margin-top: 8px;">
                         <select id="dupla3" style="flex:1"></select>
                         <select id="dupla4" style="flex:1"></select>
@@ -410,8 +454,8 @@
 
     <!-- RANKING -->
     <div id="rankingTab" class="hidden">
-        <div class="card"><div class="card-title">🏆 RANKING SIMPLES</div><div id="rankSimples"></div></div>
-        <div class="card"><div class="card-title">👥 RANKING DUPLAS</div><div id="rankDuplas"></div></div>
+        <div class="card"><div class="card-title">RANKING SIMPLES</div><div id="rankSimples"></div></div>
+        <div class="card"><div class="card-title">RANKING DUPLAS</div><div id="rankDuplas"></div></div>
     </div>
 
     <!-- ADMIN -->
@@ -597,7 +641,7 @@ async function loadMatches() {
             }).join('');
         }
         
-        // Partidas recentes com resultado e troféu
+        // Partidas recentes
         const recentDiv = document.getElementById('recentMatches');
         if(matches.length === 0) {
             recentDiv.innerHTML = '<div style="text-align:center; padding:20px;">Nenhuma partida</div>';
@@ -617,7 +661,6 @@ async function loadMatches() {
             }).join('');
         }
         
-        // Select de exclusão
         const deleteSelect = document.getElementById('deleteSelect');
         deleteSelect.innerHTML = '<option value="">Selecione</option>' + 
             matches.slice(0, 20).map(m => {
@@ -655,10 +698,9 @@ async function loadCheckins() {
         if(dates.length > 0) activeDate = dates[0];
         
         const activeCheckins = activeDate ? checkinsByDate[activeDate] : [];
-        const activeIds = activeCheckins.map(c => c.playerId);
-        const confirmados = players.filter(p => activeIds.includes(p.id));
+        const confirmados = players.filter(p => activeCheckins.some(c => c.playerId === p.id));
         
-        const container = document.getElementById('nextPlayers');
+        const container = document.getElementById('nextPlayersList');
         const dateDiv = document.getElementById('matchDate');
         const statusDiv = document.getElementById('matchStatus');
         
@@ -669,41 +711,58 @@ async function loadCheckins() {
         }
         
         if(confirmados.length >= 2) {
-            const p1 = confirmados[0], p2 = confirmados[1];
-            container.innerHTML = `
-                <div class="next-player">
-                    <img src="${p1.photoUrl || 'https://via.placeholder.com/60'}" class="next-player-img" onerror="this.src='https://via.placeholder.com/60'">
-                    <div class="next-player-name">${p1.name}</div>
-                    <button class="btn-small btn-outline cancel-checkin" data-id="${p1.id}" data-date="${activeDate}" style="margin-top:8px; font-size:0.6rem;">Cancelar</button>
-                </div>
-                <span class="vs">VS</span>
-                <div class="next-player">
-                    <img src="${p2.photoUrl || 'https://via.placeholder.com/60'}" class="next-player-img" onerror="this.src='https://via.placeholder.com/60'">
-                    <div class="next-player-name">${p2.name}</div>
-                    <button class="btn-small btn-outline cancel-checkin" data-id="${p2.id}" data-date="${activeDate}" style="margin-top:8px; font-size:0.6rem;">Cancelar</button>
-                </div>
-            `;
+            let html = '';
+            confirmados.forEach((player, index) => {
+                const checkinData = activeCheckins.find(c => c.playerId === player.id);
+                const time = checkinData?.time || '19:00';
+                html += `
+                    <div class="next-player-row">
+                        <div class="next-player-info">
+                            <img src="${player.photoUrl || 'https://via.placeholder.com/45'}" class="next-player-img" onerror="this.src='https://via.placeholder.com/45'">
+                            <div>
+                                <div class="next-player-name">${player.name}</div>
+                                <div class="checkin-time">⏰ Check-in: ${time}</div>
+                            </div>
+                        </div>
+                        <button class="cancel-btn cancel-checkin" data-id="${player.id}" data-date="${activeDate}">Cancelar</button>
+                    </div>
+                `;
+                if(index < confirmados.length - 1) {
+                    html += `<div style="text-align:center; margin:5px 0;"><span class="vs-badge">VS</span></div>`;
+                }
+            });
+            container.innerHTML = html;
             statusDiv.innerHTML = `✅ ${confirmados.length} jogadores confirmados`;
             
-            // Adicionar eventos de cancelamento
             document.querySelectorAll('.cancel-checkin').forEach(btn => {
                 btn.onclick = (e) => {
                     e.stopPropagation();
                     const playerId = btn.dataset.id;
                     const date = btn.dataset.date;
-                    showConfirm(`Cancelar check-in de ${players.find(p=>p.id===playerId)?.name}?`, () => cancelCheckin(playerId, date));
+                    const playerName = players.find(p=>p.id===playerId)?.name;
+                    showConfirm(`Cancelar check-in de ${playerName}?`, () => cancelCheckin(playerId, date));
                 };
             });
         } else {
             container.innerHTML = `
-                <div class="next-player"><div class="next-player-img"><i class="fas fa-user" style="font-size:28px; color:#B8865A;"></i></div><div class="next-player-name">---</div></div>
-                <span class="vs">VS</span>
-                <div class="next-player"><div class="next-player-img"><i class="fas fa-user" style="font-size:28px; color:#B8865A;"></i></div><div class="next-player-name">---</div></div>
+                <div class="next-player-row">
+                    <div class="next-player-info">
+                        <div class="next-player-img"><i class="fas fa-user" style="font-size:24px; color:#B8865A;"></i></div>
+                        <div class="next-player-name">Aguardando jogador 1</div>
+                    </div>
+                </div>
+                <div style="text-align:center; margin:5px 0;"><span class="vs-badge">VS</span></div>
+                <div class="next-player-row">
+                    <div class="next-player-info">
+                        <div class="next-player-img"><i class="fas fa-user" style="font-size:24px; color:#B8865A;"></i></div>
+                        <div class="next-player-name">Aguardando jogador 2</div>
+                    </div>
+                </div>
             `;
             statusDiv.innerHTML = `⏳ Aguardando check-ins (${confirmados.length}/2)`;
         }
         
-        // Lista de check-ins
+        // Lista de check-ins com horário
         const checkinListDiv = document.getElementById('checkinList');
         if(checkins.length === 0) {
             checkinListDiv.innerHTML = '<div style="text-align:center;">Nenhum check-in</div>';
@@ -711,8 +770,9 @@ async function loadCheckins() {
             checkinListDiv.innerHTML = checkins.slice(0, 10).map(c => {
                 const p = players.find(p => p.id === c.playerId);
                 const data = c.date ? new Date(c.date).toLocaleDateString() : '?';
+                const hora = c.time || '19:00';
                 return `<div class="flex-between player-item">
-                            <span>📅 ${data} - ${p?.name || '?'}</span>
+                            <span>📅 ${data} ⏰ ${hora} - ${p?.name || '?'}</span>
                             <button class="btn-small btn-outline cancel-single" data-id="${c.id}" style="width:auto; padding:4px 12px;">Cancelar</button>
                         </div>`;
             }).join('');
@@ -855,14 +915,17 @@ async function addLoser() {
 async function doCheckin() {
     const id = document.getElementById('checkinSelect').value;
     const date = document.getElementById('checkinDate').value;
+    const time = document.getElementById('checkinTime').value;
     
     if(!id) { showToast('Selecione um jogador'); return; }
     if(!date) { showToast('Selecione a data do duelo'); return; }
     
-    showConfirm(`Confirmar check-in de ${players.find(p=>p.id===id)?.name} para ${new Date(date).toLocaleDateString()}?`, async () => {
+    const playerName = players.find(p=>p.id===id)?.name;
+    showConfirm(`Confirmar check-in de ${playerName} para ${new Date(date).toLocaleDateString()} às ${time}?`, async () => {
         await db.ref('checkins').push({
             playerId: id,
             date: date,
+            time: time,
             timestamp: Date.now()
         });
         showToast(`✅ Check-in confirmado!`);
@@ -931,7 +994,8 @@ async function saveMatch() {
         resultText = sets.join(' • ');
     }
     
-    showConfirm(`Registrar partida?\nVencedor: ${winners.map(w=>players.find(p=>p.id===w)?.name).join('/')}`, async () => {
+    const winnerNames = winners.map(w=>players.find(p=>p.id===w)?.name).join(' / ');
+    showConfirm(`Registrar partida?\nVencedor: ${winnerNames}`, async () => {
         await db.ref('matches').push({
             type: type,
             winners: winners,
@@ -948,7 +1012,7 @@ async function saveMatch() {
         document.getElementById('set3a').value = '';
         document.getElementById('set3b').value = '';
         
-        // Limpar check-ins da data atual para zerar o próximo duelo
+        // Limpar check-ins da data atual
         const activeDate = document.getElementById('checkinDate').value;
         if(activeDate) {
             const snapshot = await db.ref('checkins').once('value');
