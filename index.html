@@ -4,11 +4,51 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="theme-color" content="#F47B20">
-    <title>Quarteto Tenístico | Ranking Oficial</title>
+    <title>Quarteto Tenístico</title>
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="quarteto tenistico.png">
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, query, orderBy, getDocs, deleteDoc, doc, where, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
+        
+        const firebaseConfig = {
+            apiKey: "AIzaSyC1HCA84bAsQWsf1y0c85gXZ2_Jn6_syaU",
+            authDomain: "quartetotenistico-9c9ab.firebaseapp.com",
+            databaseURL: "https://quartetotenistico-9c9ab-default-rtdb.firebaseio.com",
+            projectId: "quartetotenistico-9c9ab",
+            storageBucket: "quartetotenistico-9c9ab.firebasestorage.app",
+            messagingSenderId: "791700433774",
+            appId: "1:791700433774:web:ea08cc0ad6c1cc045fef7f",
+            measurementId: "G-VY5H7867HJ"
+        };
+        
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const storage = getStorage(app);
+        
+        window.db = db;
+        window.storage = storage;
+        window.addDoc = addDoc;
+        window.collection = collection;
+        window.query = query;
+        window.orderBy = orderBy;
+        window.getDocs = getDocs;
+        window.deleteDoc = deleteDoc;
+        window.doc = doc;
+        window.where = where;
+        window.updateDoc = updateDoc;
+        window.ref = ref;
+        window.uploadBytes = uploadBytes;
+        window.getDownloadURL = getDownloadURL;
+        window.deleteObject = deleteObject;
+        
+        console.log("Firebase inicializado!");
+    </script>
     
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -37,11 +77,12 @@
         }
         
         .next-match-title { font-family: 'Roboto Condensed', sans-serif; font-size: 0.85rem; letter-spacing: 2px; color: #F47B20; font-weight: 700; margin-bottom: 16px; }
-        .next-match-players { display: flex; justify-content: center; align-items: center; gap: 30px; flex-wrap: wrap; }
+        .next-match-players { display: flex; justify-content: center; align-items: center; gap: 30px; flex-wrap: wrap; margin-bottom: 15px; }
         .next-player { text-align: center; }
         .next-player-photo { width: 80px; height: 80px; border-radius: 80px; object-fit: cover; border: 3px solid #F47B20; background: #F0E0D0; display: flex; align-items: center; justify-content: center; overflow: hidden; }
         .next-player-name { margin-top: 10px; font-weight: 700; color: #4A2A1A; }
         .vs-divider { font-family: 'Roboto Condensed', sans-serif; font-size: 1.2rem; font-weight: 800; color: #F47B20; background: #FFF0E0; padding: 5px 15px; border-radius: 40px; }
+        .match-date { margin-top: 15px; padding-top: 15px; border-top: 1px solid #F0E0D0; font-size: 0.8rem; color: #D96C1A; }
         
         .card { background: #FFFFFF; border-radius: 16px; padding: 20px; margin-bottom: 20px; border: 1px solid #E8DCC8; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
         .card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; font-family: 'Roboto Condensed', sans-serif; font-size: 1.2rem; font-weight: 700; color: #F47B20; border-left: 3px solid #F47B20; padding-left: 12px; }
@@ -50,6 +91,9 @@
         .btn-orange { background: #F47B20; border: none; padding: 12px 20px; border-radius: 40px; font-family: 'Roboto', sans-serif; font-weight: 700; color: white; font-size: 0.9rem; cursor: pointer; width: 100%; }
         .btn-orange:active { transform: scale(0.97); background: #D96C1A; }
         .btn-outline { background: transparent; border: 2px solid #F47B20; color: #F47B20; }
+        .btn-danger { background: #D32F2F; }
+        .btn-danger:active { background: #B71C1C; }
+        .btn-small { padding: 8px 12px; font-size: 0.75rem; width: auto; display: inline-block; }
         
         input, select { width: 100%; padding: 12px 16px; border-radius: 40px; border: 1px solid #E8DCC8; background: #FFFFFF; font-family: 'Roboto', sans-serif; color: #4A2A1A; margin-bottom: 12px; }
         input:focus, select:focus { outline: none; border-color: #F47B20; }
@@ -67,6 +111,7 @@
         .player-cell { display: flex; align-items: center; gap: 10px; }
         .player-photo-sm { width: 32px; height: 32px; border-radius: 32px; object-fit: cover; }
         .loser-item { background: #FFF0E8; border-left: 3px solid #FF6666; padding: 10px; border-radius: 40px; margin-bottom: 8px; display: flex; justify-content: space-between; }
+        .match-item { background: #FFF8F0; border-radius: 12px; padding: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
         .highlights-img { width: 100%; border-radius: 12px; margin-top: 12px; max-height: 200px; object-fit: cover; }
         .player-item-list { display: flex; align-items: center; gap: 10px; padding: 10px; border-bottom: 1px solid #F0E0D0; }
         .hidden { display: none; }
@@ -82,6 +127,9 @@
         
         .toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: #4A2A1A; color: white; padding: 10px 20px; border-radius: 40px; font-size: 0.8rem; z-index: 100; animation: fadeOut 2s ease-in-out; }
         @keyframes fadeOut { 0% { opacity: 1; } 70% { opacity: 1; } 100% { opacity: 0; visibility: hidden; } }
+        
+        .date-input { display: flex; gap: 10px; align-items: center; }
+        .date-input input { flex: 1; margin-bottom: 0; }
     </style>
 </head>
 <body>
@@ -91,7 +139,7 @@
     <div class="header">
         <img src="quarteto tenistico.png" alt="Logo" class="logo-img" onerror="this.src='https://via.placeholder.com/100?text=QT'">
         <h1>QUARTETO TENÍSTICO</h1>
-        <div class="sub">ROLAND GARROS • RANKING OFICIAL</div>
+        <div class="sub">SENDO RUIM EM MAIS UM ESPORTE</div>
     </div>
 
     <div class="next-match-card" id="next-match-card">
@@ -101,6 +149,7 @@
             <div class="vs-divider">VS</div>
             <div class="next-player"><div class="next-player-photo"><i class="fas fa-user-circle" style="font-size:50px; color:#F47B20;"></i></div><div class="next-player-name">Aguardando</div></div>
         </div>
+        <div id="match-date-display" class="match-date"></div>
         <div id="next-match-status" style="margin-top:12px; font-size:0.75rem; color:#D96C1A;"></div>
     </div>
 
@@ -119,9 +168,12 @@
         </div>
 
         <div class="card">
-            <div class="card-header"><i class="fas fa-check-circle"></i> Check-in da Rodada</div>
+            <div class="card-header"><i class="fas fa-check-circle"></i> Check-in com Data</div>
             <select id="checkin-player-select"></select>
-            <button class="btn-orange" id="do-checkin">✅ Marcar Presença</button>
+            <div class="date-input">
+                <input type="date" id="checkin-date" class="date-input-field">
+            </div>
+            <button class="btn-orange" id="do-checkin">✅ Marcar Presença para o Duelo</button>
             <div id="checkin-list" style="margin-top:16px;"></div>
         </div>
 
@@ -207,8 +259,14 @@
         </div>
         
         <div class="card">
-            <div class="card-header"><i class="fas fa-history"></i> Últimas Partidas</div>
+            <div class="card-header"><i class="fas fa-history"></i> Últimas Partidas <button id="refresh-matches" class="btn-small" style="width:auto; margin-left:10px;"><i class="fas fa-sync-alt"></i></button></div>
             <div id="recent-matches"></div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header"><i class="fas fa-trash-alt"></i> Excluir Resultado</div>
+            <select id="delete-match-select"></select>
+            <button class="btn-orange btn-danger" id="delete-match-btn">🗑️ Excluir Partida Selecionada</button>
         </div>
     </div>
 
@@ -216,9 +274,9 @@
         <div class="card">
             <div class="card-header"><i class="fas fa-trophy"></i> Ranking Geral</div>
             <table class="ranking-table" id="ranking-table">
-                <thead><tr><th>Pos</th><th>Jogador</th><th>Jogos</th><th>Vitórias</th><th>Derrotas</th><th>%</th></tr></thead>
+                <thead><tr><th>Pos</th><th>Jogador</th><th>Jogos</th><th>Vitórias</th><th>Derrotas</th><th>%</th><th>Games</th></tr></thead>
                 <tbody id="ranking-body"></tbody>
-             </table>
+            </table>
         </div>
         <div class="card">
             <div class="card-header"><i class="fas fa-users"></i> Ranking Duplas</div>
@@ -253,28 +311,11 @@
     </div>
 </div>
 
-<script>
-// ==================== FIREBASE INIT ====================
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getFirestore, collection, addDoc, query, orderBy, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
+<script type="module">
+// ==================== FIREBASE E APP ====================
+const db = window.db;
+const storage = window.storage;
 
-const firebaseConfig = {
-    apiKey: "AIzaSyC1HCA84bAsQWsf1y0c85gXZ2_Jn6_syaU",
-    authDomain: "quartetotenistico-9c9ab.firebaseapp.com",
-    databaseURL: "https://quartetotenistico-9c9ab-default-rtdb.firebaseio.com",
-    projectId: "quartetotenistico-9c9ab",
-    storageBucket: "quartetotenistico-9c9ab.firebasestorage.app",
-    messagingSenderId: "791700433774",
-    appId: "1:791700433774:web:ea08cc0ad6c1cc045fef7f",
-    measurementId: "G-VY5H7867HJ"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const storage = getStorage(app);
-
-// ==================== APP CODE ====================
 let players = [];
 let matches = [];
 let checkins = [];
@@ -293,13 +334,13 @@ async function loadPlayers() {
         const q = query(collection(db, "players"), orderBy("name"));
         const snap = await getDocs(q);
         players = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-        console.log("Jogadores carregados:", players.length);
+        console.log("Jogadores:", players.length);
         renderAllPlayerSelects();
         renderPlayersListAdmin();
         updateNextMatchDisplay();
         updateRankingTable();
     } catch (error) {
-        console.error("Erro ao carregar jogadores:", error);
+        console.error("Erro:", error);
         showToast("Erro ao carregar jogadores");
     }
 }
@@ -309,13 +350,14 @@ async function loadMatches() {
         const q = query(collection(db, "matches"), orderBy("date", "desc"));
         const snap = await getDocs(q);
         matches = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-        console.log("Partidas carregadas:", matches.length);
+        console.log("Partidas:", matches.length);
         updateRankingTable();
         updateRankingDuplas();
         updateHighlights();
         updateRecentMatches();
+        updateDeleteMatchSelect();
     } catch (error) {
-        console.error("Erro ao carregar partidas:", error);
+        console.error("Erro:", error);
     }
 }
 
@@ -323,11 +365,11 @@ async function loadCheckins() {
     try {
         const q = query(collection(db, "checkins"), orderBy("timestamp", "desc"));
         const snap = await getDocs(q);
-        checkins = snap.docs.map(d => d.data());
+        checkins = snap.docs.map(d => ({ id: d.id, ...d.data() }));
         renderCheckins();
         updateNextMatchDisplay();
     } catch (error) {
-        console.error("Erro ao carregar checkins:", error);
+        console.error("Erro:", error);
     }
 }
 
@@ -338,7 +380,7 @@ async function loadLosers() {
         losers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
         renderLosersRanking();
     } catch (error) {
-        console.error("Erro ao carregar perdedores:", error);
+        console.error("Erro:", error);
     }
 }
 
@@ -390,19 +432,25 @@ function renderLosersRanking() {
 }
 
 function renderCheckins() {
-    const today = new Date().toDateString();
-    const todayCheckins = checkins.filter(c => new Date(c.date).toDateString() === today);
-    const names = todayCheckins.map(c => players.find(p => p.id === c.playerId)?.name).filter(n => n);
     const div = document.getElementById("checkin-list");
     if(div) {
-        div.innerHTML = `<i class="fas fa-users"></i> Check-ins hoje: ${names.length ? names.join(", ") : "Nenhum"}`;
+        if(checkins.length === 0) {
+            div.innerHTML = '<i class="fas fa-users"></i> Nenhum check-in registrado';
+        } else {
+            const checkinsList = checkins.slice(0, 10).map(c => {
+                const player = players.find(p => p.id === c.playerId);
+                const date = new Date(c.date).toLocaleDateString();
+                return `<div style="padding:5px 0; font-size:0.75rem;">📅 ${date} - ${player?.name || "?"}</div>`;
+            }).join('');
+            div.innerHTML = `<i class="fas fa-users"></i> Últimos check-ins:<br>${checkinsList}`;
+        }
     }
 }
 
 function updateRecentMatches() {
     const div = document.getElementById("recent-matches");
     if(!div) return;
-    const recent = matches.slice(0, 10);
+    const recent = matches.slice(0, 15);
     if(recent.length === 0) {
         div.innerHTML = "<div style='text-align:center; padding:20px;'>Nenhuma partida registrada</div>";
         return;
@@ -412,22 +460,70 @@ function updateRecentMatches() {
         const loser = m.losers?.map(l => players.find(p => p.id === l)?.name).join(" / ") || "?";
         const date = new Date(m.date).toLocaleDateString();
         const typeLabel = m.type === "duplas" ? "👥 Duplas" : "🎾 Simples";
-        return `<div style="padding:12px; border-bottom:1px solid #F0E0D0;">
-                    <div style="font-weight:700;">${winner} venceu ${loser}</div>
-                    <div style="font-size:0.75rem; color:#D96C1A;">${typeLabel} • ${m.result || "Placar não informado"} • ${date}</div>
+        const gamesWon = m.gamesWon || "?";
+        return `<div class="match-item">
+                    <div style="flex:1;">
+                        <div style="font-weight:700;">${winner} venceu ${loser}</div>
+                        <div style="font-size:0.7rem; color:#D96C1A;">${typeLabel} • ${m.result || "Placar não informado"} • ${date}</div>
+                        <div style="font-size:0.65rem; color:#2E7D32;">🏆 Games vencidos: ${gamesWon}</div>
+                    </div>
                 </div>`;
     }).join('');
 }
 
+function updateDeleteMatchSelect() {
+    const sel = document.getElementById("delete-match-select");
+    if(sel) {
+        sel.innerHTML = '<option value="">Selecione uma partida para excluir</option>' + 
+            matches.slice(0, 30).map(m => {
+                const winner = m.winners?.map(w => players.find(p => p.id === w)?.name).join("/") || "?";
+                const loser = m.losers?.map(l => players.find(p => p.id === l)?.name).join("/") || "?";
+                const date = new Date(m.date).toLocaleDateString();
+                return `<option value="${m.id}">${date} - ${winner} x ${loser}</option>`;
+            }).join('');
+    }
+}
+
+async function deleteMatch(matchId) {
+    if(!matchId) {
+        showToast("Selecione uma partida");
+        return;
+    }
+    try {
+        await deleteDoc(doc(db, "matches", matchId));
+        showToast("✅ Partida excluída com sucesso!");
+        await loadMatches();
+    } catch (error) {
+        console.error("Erro:", error);
+        showToast("Erro ao excluir partida");
+    }
+}
+
 function updateRankingTable() {
     const stats = {};
-    players.forEach(p => { stats[p.id] = { jogos: 0, vitorias: 0, derrotas: 0 }; });
+    players.forEach(p => { 
+        stats[p.id] = { 
+            jogos: 0, 
+            vitorias: 0, 
+            derrotas: 0, 
+            gamesWon: 0,
+            assiduidade: 0
+        }; 
+    });
+    
+    // Calcular assiduidade baseada em check-ins
+    const playerCheckins = {};
+    checkins.forEach(c => {
+        playerCheckins[c.playerId] = (playerCheckins[c.playerId] || 0) + 1;
+    });
     
     matches.forEach(m => {
+        const gamesWonMatch = m.gamesWon || 0;
         m.winners?.forEach(w => { 
             if(stats[w]) {
                 stats[w].jogos += 1;
                 stats[w].vitorias += 1;
+                stats[w].gamesWon += gamesWonMatch;
             }
         });
         m.losers?.forEach(l => { 
@@ -438,11 +534,21 @@ function updateRankingTable() {
         });
     });
     
-    const sorted = Object.entries(stats).sort((a,b) => b[1].vitorias - a[1].vitorias);
+    players.forEach(p => {
+        stats[p.id].assiduidade = playerCheckins[p.id] || 0;
+    });
+    
+    // Ordenação: 1º Vitórias, 2º Assiduidade, 3º Games vencidos
+    const sorted = Object.entries(stats).sort((a,b) => {
+        if(b[1].vitorias !== a[1].vitorias) return b[1].vitorias - a[1].vitorias;
+        if(b[1].assiduidade !== a[1].assiduidade) return b[1].assiduidade - a[1].assiduidade;
+        return b[1].gamesWon - a[1].gamesWon;
+    });
+    
     const tbody = document.getElementById("ranking-body");
     if(tbody) {
         if(sorted.length === 0) {
-            tbody.innerHTML = "<tr><td colspan='6'>Nenhuma partida registrada</td></tr>";
+            tbody.innerHTML = "<tr><td colspan='7'>Nenhuma partida registrada</td></tr>";
         } else {
             tbody.innerHTML = sorted.map(([id, s], idx) => {
                 const player = players.find(p => p.id === id);
@@ -454,6 +560,7 @@ function updateRankingTable() {
                     <td style="color:#2E7D32;">${s.vitorias}</td>
                     <td style="color:#D96C1A;">${s.derrotas}</td>
                     <td>${percent}%</td>
+                    <td style="color:#F47B20;">${s.gamesWon}</td>
                 </tr>`;
             }).join('');
         }
@@ -509,7 +616,7 @@ async function addPlayer(name, file) {
         await loadPlayers();
         return true;
     } catch (error) {
-        console.error("Erro ao adicionar jogador:", error);
+        console.error("Erro:", error);
         showToast("Erro ao adicionar jogador");
         return false;
     }
@@ -525,7 +632,7 @@ async function deletePlayer(playerId) {
         showToast("Jogador removido");
         await loadPlayers();
     } catch (error) {
-        console.error("Erro ao remover:", error);
+        console.error("Erro:", error);
         showToast("Erro ao remover jogador");
     }
 }
@@ -549,18 +656,22 @@ async function registerLoser(playerId) {
     }
 }
 
-async function doCheckin(playerId) {
+async function doCheckin(playerId, selectedDate) {
     if(!playerId) {
         showToast("Selecione um jogador");
+        return;
+    }
+    if(!selectedDate) {
+        showToast("Selecione a data do duelo");
         return;
     }
     try {
         await addDoc(collection(db, "checkins"), {
             playerId: playerId,
-            date: new Date().toISOString(),
+            date: selectedDate,
             timestamp: Date.now()
         });
-        showToast("✅ Check-in confirmado!");
+        showToast("✅ Check-in confirmado para " + new Date(selectedDate).toLocaleDateString());
         await loadCheckins();
     } catch (error) {
         console.error("Erro:", error);
@@ -606,12 +717,28 @@ async function updateHighlights() {
     }
 }
 
+function calculateGamesWon(playersArray, winnersArray, sets) {
+    let gamesWon = 0;
+    winnersArray.forEach(winner => {
+        sets.forEach(set => {
+            const parts = set.split('/');
+            if(parts.length === 2) {
+                const p1Games = parseInt(parts[0]);
+                const p2Games = parseInt(parts[1]);
+                gamesWon += Math.max(p1Games, p2Games);
+            }
+        });
+    });
+    return gamesWon;
+}
+
 async function saveMatchWithScore() {
     const matchType = document.getElementById("match-type-score").value;
     
     let winnersArray = [];
     let losersArray = [];
     let playersArray = [];
+    let gamesWonTotal = 0;
     
     if(matchType === "simples") {
         const player1Id = document.getElementById("score-player1").value;
@@ -660,6 +787,8 @@ async function saveMatchWithScore() {
         if(s3p1 > 0 || s3p2 > 0) sets.push(`${s3p1}/${s3p2}`);
         const result = sets.join(" • ");
         
+        gamesWonTotal = calculateGamesWon(playersArray, winnersArray, sets);
+        
         try {
             await addDoc(collection(db, "matches"), {
                 type: "simples",
@@ -667,10 +796,11 @@ async function saveMatchWithScore() {
                 winners: winnersArray,
                 losers: losersArray,
                 result: result,
+                gamesWon: gamesWonTotal,
                 date: new Date().toISOString(),
                 timestamp: Date.now()
             });
-            showToast(`🎾 Partida registrada!`);
+            showToast(`🎾 Partida registrada! Games vencidos: ${gamesWonTotal}`);
             clearScoreFields();
             await loadMatches();
         } catch (error) {
@@ -723,6 +853,8 @@ async function saveMatchWithScore() {
         if(s3a > 0 || s3b > 0) sets.push(`${s3a}/${s3b}`);
         const result = sets.join(" • ");
         
+        gamesWonTotal = calculateGamesWon(playersArray, winnersArray, sets);
+        
         try {
             await addDoc(collection(db, "matches"), {
                 type: "duplas",
@@ -730,10 +862,11 @@ async function saveMatchWithScore() {
                 winners: winnersArray,
                 losers: losersArray,
                 result: result,
+                gamesWon: gamesWonTotal,
                 date: new Date().toISOString(),
                 timestamp: Date.now()
             });
-            showToast(`🎾 Partida de duplas registrada!`);
+            showToast(`🎾 Partida de duplas registrada! Games vencidos: ${gamesWonTotal}`);
             clearScoreFields();
             await loadMatches();
         } catch (error) {
@@ -797,15 +930,24 @@ function toggleDuplaFields() {
 }
 
 async function updateNextMatchDisplay() {
-    const today = new Date().toDateString();
-    const todayCheckins = checkins.filter(c => new Date(c.date).toDateString() === today);
-    const checkedIds = todayCheckins.map(c => c.playerId);
+    const hoje = new Date().toDateString();
+    const checkinsHoje = checkins.filter(c => new Date(c.date).toDateString() === hoje);
+    const checkedIds = checkinsHoje.map(c => c.playerId);
     const available = players.filter(p => checkedIds.includes(p.id));
     
     const container = document.getElementById("next-match-players-container");
     const statusDiv = document.getElementById("next-match-status");
+    const dateDisplay = document.getElementById("match-date-display");
     
     if(!container) return;
+    
+    // Pegar data do próximo jogo (primeiro check-in do dia)
+    if(checkinsHoje.length > 0 && checkinsHoje[0].date) {
+        const matchDate = new Date(checkinsHoje[0].date);
+        dateDisplay.innerHTML = `📅 Data do Duelo: ${matchDate.toLocaleDateString('pt-BR')}`;
+    } else {
+        dateDisplay.innerHTML = '';
+    }
     
     if(available.length >= 2) {
         const p1 = available[0], p2 = available[1];
@@ -820,7 +962,7 @@ async function updateNextMatchDisplay() {
                 <div class="next-player-name">${p2.name}</div>
             </div>
         `;
-        if(statusDiv) statusDiv.innerHTML = `✅ Jogo confirmado! (${available.length} jogadores confirmados)`;
+        if(statusDiv) statusDiv.innerHTML = `✅ Duelo confirmado! (${available.length} jogadores confirmados)`;
     } else {
         container.innerHTML = `
             <div class="next-player"><div class="next-player-photo"><i class="fas fa-question" style="font-size:30px; color:#F47B20;"></i></div><div class="next-player-name">Aguardando</div></div>
@@ -863,11 +1005,21 @@ function bindEvents() {
     const deleteBtn = document.getElementById("delete-player-btn");
     if(deleteBtn) deleteBtn.onclick = () => deletePlayer(document.getElementById("delete-player-select").value);
     
+    const deleteMatchBtn = document.getElementById("delete-match-btn");
+    if(deleteMatchBtn) deleteMatchBtn.onclick = () => deleteMatch(document.getElementById("delete-match-select").value);
+    
+    const refreshBtn = document.getElementById("refresh-matches");
+    if(refreshBtn) refreshBtn.onclick = () => loadMatches();
+    
     const loserBtn = document.getElementById("register-loser");
     if(loserBtn) loserBtn.onclick = () => registerLoser(document.getElementById("loser-select").value);
     
     const checkinBtn = document.getElementById("do-checkin");
-    if(checkinBtn) checkinBtn.onclick = () => doCheckin(document.getElementById("checkin-player-select").value);
+    if(checkinBtn) checkinBtn.onclick = () => {
+        const playerId = document.getElementById("checkin-player-select").value;
+        const selectedDate = document.getElementById("checkin-date").value;
+        doCheckin(playerId, selectedDate);
+    };
     
     const uploadBtn = document.getElementById("upload-photo-btn");
     if(uploadBtn) uploadBtn.onclick = () => uploadPhoto(document.getElementById("match-photo").files[0]);
@@ -903,6 +1055,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.log("Iniciando aplicação...");
     setupTabs();
     bindEvents();
+    
+    const today = new Date().toISOString().split('T')[0];
+    const dateInput = document.getElementById("checkin-date");
+    if(dateInput) dateInput.value = today;
+    
     await loadPlayers();
     await loadMatches();
     await loadCheckins();
